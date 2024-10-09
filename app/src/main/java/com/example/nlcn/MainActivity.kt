@@ -4,14 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Home
@@ -21,36 +23,35 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.nlcn.ui.theme.Grey
 import com.example.nlcn.ui.theme.NLCNTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            // Applies your app's theme to the content.
             NLCNTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(), // Occupies the entire available space
-                    color = Color.White // Sets the background color to white
+                    // Makes the surface fill the entire screen.
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = Color.Black // Sets the background color of the surface to white.
                 ) {
-                    MyBottomNavBar()
+                    MyBottomNavBar() // Calls the composable function that creates the bottom navigation bar.
                 }
             }
         }
@@ -58,78 +59,100 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyBottomNavBar(){
-    val navigationController = rememberNavController() // Creates a navigation controller
-    val selected = remember { mutableStateOf(Icons.Default.Home) } // State to track selected icon
+fun MyBottomNavBar() {
+    val navController = rememberNavController() // Creates a navigation controller to manage navigation between screens.
+    val selected = remember { mutableStateOf(Icons.Default.Home) } // Stores the Home icon as the default selected navigation item.
 
-    // Get system bar insets
-    val systemBars = WindowInsets.systemBars
-
-    val navigationBarHeight = if (systemBars.getBottom(LocalDensity.current) > 0) {
-        1.dp
-    } else {
-        systemBars.getBottom(LocalDensity.current).dp
-    }
-
-    Scaffold( // Provides basic Material Design layout structure
+    Scaffold(
         bottomBar = {
-            BottomAppBar(
-                containerColor = Grey
+            Box( // Defines the box that contains the bottom bar.
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding() // Adds padding to avoid overlapping with system navigation bars.
+                    .background(Color.Black)
             ) {
-                // Home Icon button
-                IconButton(onClick = {
-                    selected.value = Icons.Default.Home // Update selected icon state
-                    navigationController.navigate(Screens.Home.screen){  // Navigate to Home screen
-                        popUpTo(Screens.Home.screen) // Got the Home screen when pressed back button
+                BottomAppBar( // Define the bottom bar itself
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(45)) // Clips the BottomAppBar to a rounded shape.
+                        .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
+                        .align(Alignment.BottomCenter)
+                        .height(56.dp), // Sets the height of the BottomAppBar.
+                    containerColor = Color(0xFF483475),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+
+                    // Icon button for the Home.kt file.
+                    IconButton(
+                        onClick = { // Similar to set on click listener.
+                            selected.value = Icons.Default.Home // Set the selected icon to Home.kt.
+                            // Open the Home activity if the Home icon is clicked.
+                            navController.navigate(Screens.Home.screen) { // Force to return to the home screen on back press.
+                                popUpTo(Screens.Home.screen) // Pops up to the home screen in the back stack.
+                            }
+                        },
+                        modifier = Modifier.weight(1f) // Assigns equal space between icons.
+                    ) {
+                        Icon( // Icon displays the icon for Home.kt.
+                            imageVector = Icons.Default.Home,
+                            contentDescription = "Home screen",
+                            modifier = Modifier.size(26.dp),
+                            tint = if (selected.value == Icons.Default.Home) Color.White else Color.DarkGray
+                        )
                     }
-                },
-                modifier = Modifier.weight(1f)){ // Each button takes equal width
-                    // Icon appearance changes based on selection
-                    Icon(Icons.Default.Home, contentDescription = null, modifier = Modifier.size(26.dp),
-                        tint = if(selected.value == Icons.Default.Home) Color.White else Color.DarkGray)
-                }
 
-
-                // Local File Icon button
-                IconButton(onClick = {
-                    selected.value = Icons.Default.Folder
-                    navigationController.navigate(Screens.LocalFile.screen){
-                        popUpTo(Screens.Home.screen)
+                    // Icon button for the LocalFile.kt file.
+                    IconButton(
+                        onClick = {
+                            selected.value = Icons.Default.Folder
+                            navController.navigate(Screens.LocalFile.screen) {
+                                popUpTo(Screens.Home.screen)
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Folder,
+                            contentDescription = "Local File screen",
+                            modifier = Modifier.size(26.dp),
+                            tint = if (selected.value == Icons.Default.Folder) Color.White else Color.DarkGray
+                        )
                     }
-                },
-                    modifier = Modifier.weight(1f)){
-                    Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(26.dp),
-                        tint = if(selected.value == Icons.Default.Folder) Color.White else Color.DarkGray)
-                }
 
-
-                // Settings Icon button
-                IconButton(onClick = {
-                    selected.value = Icons.Default.Settings
-                    navigationController.navigate(Screens.Settings.screen){
-                        popUpTo(Screens.Home.screen)
+                    // Icon button for the Settings.kt file.
+                    IconButton(
+                        onClick = {
+                            selected.value = Icons.Default.Settings
+                            navController.navigate(Screens.Settings.screen) {
+                                popUpTo(Screens.Home.screen)
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings screen",
+                            modifier = Modifier.size(26.dp),
+                            tint = if (selected.value == Icons.Default.Settings) Color.White else Color.DarkGray
+                        )
                     }
-                },
-                    modifier = Modifier.weight(1f)){
-                    Icon(Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(26.dp),
-                        tint = if(selected.value == Icons.Default.Settings) Color.White else Color.DarkGray)
                 }
             }
         }
-//        modifier = Modifier.padding(WindowInsets.navigationBars.asPaddingValues())
-    ) {paddingValues -> // Content within theScaffold, with padding from the bottom bar
-        NavHost(navController = navigationController, // Sets up navigation
-            startDestination = Screens.Home.screen, // Initial screen is Home
-            modifier = Modifier.padding(paddingValues)){  // Applies padding
-            composable(Screens.Home.screen){ Home(navigationController) } // Defines route for Home screen
-            composable(Screens.LocalFile.screen){ LocalFile(navigationController) } // Defines route for Local File screen
-            composable(Screens.Settings.screen){ Settings() } // Defines route for Settings screen
+    ) { paddingValues ->
+        NavHost(
+            navController = navController, // Pass the navController to NavHost.
+            startDestination = Screens.Home.screen, // Set initial destination to Home.kt file.
+            modifier = Modifier.padding(paddingValues) // Apply padding values to the NavHost.
+        ) {
+            // Composable functions defining the routes to different screens.
+            composable(Screens.Home.screen) { Home(navController) } // Home.kt file.
+            composable(Screens.LocalFile.screen) { LocalFile(navController) } // LocalFile.kt file.
+            composable(Screens.Settings.screen) { Settings() } // Settings.kt file.
 
             composable("detail_screen/{soundFileName}") { backStackEntry ->
                 val soundFileName = backStackEntry.arguments?.getString("soundFileName") ?: return@composable
                 PlayPreLoadedSoundScreen(context = LocalContext.current, soundFileName = soundFileName)
             }
-
         }
     }
 }
