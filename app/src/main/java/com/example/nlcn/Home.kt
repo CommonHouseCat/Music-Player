@@ -66,10 +66,9 @@ fun Home(navController: NavController){
             item { CategoryTitle(title = "Rain") }
             item {
                 CategoryRow(
-                    sounds = listOf(
-                        SoundItem("Rain in a Forest", R.drawable.rain_in_forest),
-                        SoundItem("Rain on Window", R.drawable.rain_window),
-                        SoundItem("Thunderstorm", R.drawable.thunderstorm)
+                    sounds = listOf(SoundItem("Rain on Window", R.drawable.rain_window),
+                        SoundItem("Thunderstorm", R.drawable.thunderstorm),
+                        SoundItem("Rain in a Forest", R.drawable.rain_in_forest)
                     ),
                     navController = navController
                 )
@@ -103,7 +102,6 @@ fun Home(navController: NavController){
             item {
                 CategoryRow(
                     sounds = listOf(
-                        SoundItem("Busy Intersection", R.drawable.busy_intersection),
                         SoundItem("A Silent Car Ride", R.drawable.car_ride),
                         SoundItem("People talking in the other room", R.drawable.iaminyourwall)
                     ),
@@ -143,16 +141,15 @@ fun SoundCard(sound: SoundItem, navController: NavController) {
 
         "Classic Fireplace" -> "classic_fireplace.mp3"
 
-        "Fireplace during a storm" -> "thunderstorm.mp3"
+        "Fireplace during a storm" -> "fireplace_thunderstorm.mp3"
 
-        "Camping at night" -> "thunderstorm.mp3"
-        "Creek" -> "thunderstorm.mp3"
-        "Beach Shore" -> "thunderstorm.mp3"
-        "Forest" -> "thunderstorm.mp3"
+        "Camping at night" -> "night_at_camp.mp3"
+        "Creek" -> "creek.mp3"
+        "Beach Shore" -> "beach_shore.mp3"
+        "Forest" -> "forest.mp3"
 
-        "Busy Intersection" -> "thunderstorm.mp3"
-        "A Silent Car Ride" -> "thunderstorm.mp3"
-        "People talking in the other room" -> "thunderstorm.mp3"
+        "A Silent Car Ride" -> "silent_car_ride.mp3"
+        "People talking in the other room" -> "people_taking_in_the_other_room.mp3"
 
         else -> ""
     }
@@ -163,7 +160,7 @@ fun SoundCard(sound: SoundItem, navController: NavController) {
             .size(150.dp)
             .clickable {
                 if (soundFileName.isNotEmpty()) {
-                    navController.navigate("detail_screen/$soundFileName")
+                    navController.navigate("play_preloaded_sound/$soundFileName/${sound.name}")
                 }
             },
         shape = RoundedCornerShape(8.dp)

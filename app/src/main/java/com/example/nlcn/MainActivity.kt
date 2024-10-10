@@ -39,6 +39,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.nlcn.ui.theme.NLCNTheme
 
 class MainActivity : ComponentActivity() {
+    private val showBottomBarState = lazy { mutableStateOf(true) }
+    var showBottomBar: Boolean
+        get() = showBottomBarState.value.value
+        set(value) { showBottomBarState.value.value = value }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     // Makes the surface fill the entire screen.
                     modifier = Modifier
                         .fillMaxSize(),
-                    color = Color.Black // Sets the background color of the surface to white.
+                    color = Color.Black // Sets the background color of the surface to black.
                 ) {
                     MyBottomNavBar() // Calls the composable function that creates the bottom navigation bar.
                 }
@@ -62,81 +67,85 @@ class MainActivity : ComponentActivity() {
 fun MyBottomNavBar() {
     val navController = rememberNavController() // Creates a navigation controller to manage navigation between screens.
     val selected = remember { mutableStateOf(Icons.Default.Home) } // Stores the Home icon as the default selected navigation item.
+    val mainActivity = LocalContext.current as MainActivity
 
     Scaffold(
         bottomBar = {
-            Box( // Defines the box that contains the bottom bar.
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding() // Adds padding to avoid overlapping with system navigation bars.
-                    .background(Color.Black)
-            ) {
-                BottomAppBar( // Define the bottom bar itself
+            if(mainActivity.showBottomBar) {
+                Box( // Defines the box that contains the bottom bar.
                     modifier = Modifier
-                        .clip(RoundedCornerShape(45)) // Clips the BottomAppBar to a rounded shape.
-                        .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
-                        .align(Alignment.BottomCenter)
-                        .height(56.dp), // Sets the height of the BottomAppBar.
-                    containerColor = Color(0xFF483475),
-                    contentPadding = PaddingValues(0.dp)
+                        .fillMaxWidth()
+                        .navigationBarsPadding() // Adds padding to avoid overlapping with system navigation bars.
+                        .background(Color.Black)
                 ) {
-
-                    // Icon button for the Home.kt file.
-                    IconButton(
-                        onClick = { // Similar to set on click listener.
-                            selected.value = Icons.Default.Home // Set the selected icon to Home.kt.
-                            // Open the Home activity if the Home icon is clicked.
-                            navController.navigate(Screens.Home.screen) { // Force to return to the home screen on back press.
-                                popUpTo(Screens.Home.screen) // Pops up to the home screen in the back stack.
-                            }
-                        },
-                        modifier = Modifier.weight(1f) // Assigns equal space between icons.
+                    BottomAppBar( // Define the bottom bar itself
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(45)) // Clips the BottomAppBar to a rounded shape.
+                            .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
+                            .align(Alignment.BottomCenter)
+                            .height(56.dp), // Sets the height of the BottomAppBar.
+                        containerColor = Color(0xFF483475),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Icon( // Icon displays the icon for Home.kt.
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home screen",
-                            modifier = Modifier.size(26.dp),
-                            tint = if (selected.value == Icons.Default.Home) Color.White else Color.DarkGray
-                        )
-                    }
 
-                    // Icon button for the LocalFile.kt file.
-                    IconButton(
-                        onClick = {
-                            selected.value = Icons.Default.Folder
-                            navController.navigate(Screens.LocalFile.screen) {
-                                popUpTo(Screens.Home.screen)
-                            }
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Folder,
-                            contentDescription = "Local File screen",
-                            modifier = Modifier.size(26.dp),
-                            tint = if (selected.value == Icons.Default.Folder) Color.White else Color.DarkGray
-                        )
-                    }
+                        // Icon button for the Home.kt file.
+                        IconButton(
+                            onClick = { // Similar to set on click listener.
+                                selected.value = Icons.Default.Home // Set the selected icon to Home.kt.
+                                // Open the Home activity if the Home icon is clicked.
+                                navController.navigate(Screens.Home.screen) { // Force to return to the home screen on back press.
+                                    popUpTo(Screens.Home.screen) // Pops up to the home screen in the back stack.
+                                }
+                            },
+                            modifier = Modifier.weight(1f) // Assigns equal space between icons.
+                        ) {
+                            Icon( // Icon displays the icon for Home.kt.
+                                imageVector = Icons.Default.Home,
+                                contentDescription = "Home screen",
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.Home) Color.White else Color.DarkGray
+                            )
+                        }
 
-                    // Icon button for the Settings.kt file.
-                    IconButton(
-                        onClick = {
-                            selected.value = Icons.Default.Settings
-                            navController.navigate(Screens.Settings.screen) {
-                                popUpTo(Screens.Home.screen)
-                            }
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings screen",
-                            modifier = Modifier.size(26.dp),
-                            tint = if (selected.value == Icons.Default.Settings) Color.White else Color.DarkGray
-                        )
+                        // Icon button for the LocalFile.kt file.
+                        IconButton(
+                            onClick = {
+                                selected.value = Icons.Default.Folder
+                                navController.navigate(Screens.LocalFile.screen) {
+                                    popUpTo(Screens.Home.screen)
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Folder,
+                                contentDescription = "Local File screen",
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.Folder) Color.White else Color.DarkGray
+                            )
+                        }
+
+                        // Icon button for the Settings.kt file.
+                        IconButton(
+                            onClick = {
+                                selected.value = Icons.Default.Settings
+                                navController.navigate(Screens.Settings.screen) {
+                                    popUpTo(Screens.Home.screen)
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings screen",
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.Settings) Color.White else Color.DarkGray
+                            )
+                        }
                     }
                 }
             }
+
         }
     ) { paddingValues ->
         NavHost(
@@ -149,9 +158,11 @@ fun MyBottomNavBar() {
             composable(Screens.LocalFile.screen) { LocalFile(navController) } // LocalFile.kt file.
             composable(Screens.Settings.screen) { Settings() } // Settings.kt file.
 
-            composable("detail_screen/{soundFileName}") { backStackEntry ->
+            // Composable function defining the route to PlayPreLoadedSound.kt with 2 parameter (soundFileName and displayName).
+            composable("play_preloaded_sound/{soundFileName}/{displayName}") { backStackEntry ->
                 val soundFileName = backStackEntry.arguments?.getString("soundFileName") ?: return@composable
-                PlayPreLoadedSoundScreen(context = LocalContext.current, soundFileName = soundFileName)
+                val displayName = backStackEntry.arguments?.getString("displayName") ?: return@composable
+                PlayPreLoadedSoundScreen(context = LocalContext.current, soundFileName = soundFileName, displayName = displayName)
             }
         }
     }
