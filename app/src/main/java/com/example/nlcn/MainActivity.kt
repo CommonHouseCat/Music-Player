@@ -84,7 +84,7 @@ fun MyBottomNavBar() {
                             .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
                             .align(Alignment.BottomCenter)
                             .height(56.dp), // Sets the height of the BottomAppBar.
-                        containerColor = Color(0xFF483475),
+                        containerColor = Color(0xFF8031A7),
                         contentPadding = PaddingValues(0.dp)
                     ) {
 
@@ -103,7 +103,7 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Home,
                                 contentDescription = "Home screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Home) Color.White else Color.DarkGray
+                                tint = if (selected.value == Icons.Default.Home) Color.White else Color.Black
                             )
                         }
 
@@ -121,7 +121,7 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Folder,
                                 contentDescription = "Local File screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Folder) Color.White else Color.DarkGray
+                                tint = if (selected.value == Icons.Default.Folder) Color.White else Color.Black
                             )
                         }
 
@@ -139,7 +139,7 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = "Settings screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Settings) Color.White else Color.DarkGray
+                                tint = if (selected.value == Icons.Default.Settings) Color.White else Color.Black
                             )
                         }
                     }
