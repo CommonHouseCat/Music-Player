@@ -103,7 +103,8 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Home,
                                 contentDescription = "Home screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Home) Color.White else Color.Black
+                                tint = if (selected.value == Icons.Default.Home)
+                                    Color.White else Color.Black
                             )
                         }
 
@@ -121,7 +122,8 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Folder,
                                 contentDescription = "Local File screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Folder) Color.White else Color.Black
+                                tint = if (selected.value == Icons.Default.Folder)
+                                    Color.White else Color.Black
                             )
                         }
 
@@ -139,7 +141,8 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = "Settings screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Settings) Color.White else Color.Black
+                                tint = if (selected.value == Icons.Default.Settings)
+                                    Color.White else Color.Black
                             )
                         }
                     }
@@ -155,7 +158,7 @@ fun MyBottomNavBar() {
         ) {
             // Composable functions defining the routes to different screens.
             composable(Screens.Home.screen) { Home(navController) } // Home.kt file.
-            composable(Screens.LocalFile.screen) { LocalFile(navController) } // LocalFile.kt file.
+            composable(Screens.LocalFile.screen) { LocalFile() } // LocalFile.kt file.
             composable(Screens.Settings.screen) { Settings() } // Settings.kt file.
 
             // Composable function defining the route to PlayPreLoadedSound.kt with 2 parameter (soundFileName and displayName).
