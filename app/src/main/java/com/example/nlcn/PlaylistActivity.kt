@@ -1,9 +1,13 @@
 package com.example.nlcn
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -35,6 +39,7 @@ import com.example.nlcn.ui.theme.NLCNTheme
 
 class PlaylistActivity : ComponentActivity() {
 
+    private lateinit var pickAudioFileLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +47,15 @@ class PlaylistActivity : ComponentActivity() {
         val playlistId = intent.getIntExtra("PLAYLIST_ID", -1)
         val playlistTitle = intent.getStringExtra("PLAYLIST_TITLE") ?: "Playlist"
 
+        pickAudioFileLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                val displayName = getAudioFileName(this, uri)
+            }
+        }
+
         setContent {
             NLCNTheme {
-                PlaylistScreen(context = this, playlistId, playlistTitle)
+                PlaylistScreen(context = this, playlistId, playlistTitle, pickAudioFileLauncher = pickAudioFileLauncher)
             }
         }
     }
@@ -52,7 +63,7 @@ class PlaylistActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaylistScreen(context: Context, playlistId: Int, playlistTitle: String) {
+fun PlaylistScreen(context: Context, playlistId: Int, playlistTitle: String, pickAudioFileLauncher: ActivityResultLauncher<String>) {
 
     var showAddDialog by remember { mutableStateOf(false)}
     var displayName by remember { mutableStateOf("") }
@@ -85,6 +96,7 @@ fun PlaylistScreen(context: Context, playlistId: Int, playlistTitle: String) {
                     }
                 }
             )
+
             Text (
                 "Playlist Content (ID: $playlistId)",
                 color = Color.White,
@@ -115,13 +127,17 @@ fun PlaylistScreen(context: Context, playlistId: Int, playlistTitle: String) {
                             )
                         )
 
-                        IconButton(onClick = {}, modifier = Modifier.padding(top = 4.dp)){
+                        IconButton(onClick = { pickAudioFileLauncher.launch("audio/*") }, modifier = Modifier.padding(top = 4.dp)){
                             Icon(
                                 imageVector = Icons.Default.Folder,
                                 contentDescription = "Add from local device",
                                 tint = Color.White,
                                 modifier = Modifier.size(32.dp)
                             )
+                        }
+
+                        if (displayName.isNotEmpty()) {
+                            Text(text = "Selected file: $displayName", color = Color.White)
                         }
                     }
                 },
@@ -147,4 +163,18 @@ fun PlaylistScreen(context: Context, playlistId: Int, playlistTitle: String) {
             )
         }
     }
+}
+// Helper function to get the file name from the Uri
+private fun getAudioFileName(context: Context, uri: Uri): String {
+    var name = "Unknown"
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (nameIndex != -1) {
+                name = it.getString(nameIndex)
+            }
+        }
+    }
+    return name
 }
