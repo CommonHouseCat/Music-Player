@@ -1,6 +1,8 @@
 package com.example.nlcn
 
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,7 +48,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalFile() {
@@ -55,11 +56,10 @@ fun LocalFile() {
     val playlistDao = remember { database.playlistDao() }
 
     var showAddDialog by remember { mutableStateOf(false) }
-    var playlistTitle by remember { mutableStateOf("") }
-    var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
-
     var showDeleteDialog by remember { mutableStateOf(false) }
     var playlistToDelete by remember { mutableStateOf<PlaylistEntity?>(null) }
+    var playlistTitle by remember { mutableStateOf("") }
+    var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -92,9 +92,7 @@ fun LocalFile() {
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Black
-            ),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
             actions = {
                 IconButton(onClick = { showAddDialog = true }) {
                     Icon(
@@ -116,6 +114,13 @@ fun LocalFile() {
                             playlistToDelete = playlist
                             showDeleteDialog = true
                         }
+                    },
+                    onItemClick = {
+                        val intent = Intent(context, PlaylistActivity::class.java).apply {
+                            putExtra("PLAYLIST_ID", playlist.id)
+                            putExtra("PLAYLIST_TITLE", playlist.title)
+                        }
+                        context.startActivity(intent)
                     }
                 )
             }
@@ -210,13 +215,14 @@ fun LocalFile() {
 
 
 @Composable
-fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit) {
+fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding( start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.DarkGray),
+            .background(Color.DarkGray)
+            .clickable (onClick = onItemClick),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -245,3 +251,4 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit) {
         }
     }
 }
+
