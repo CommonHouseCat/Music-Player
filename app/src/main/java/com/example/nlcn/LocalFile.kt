@@ -54,6 +54,7 @@ fun LocalFile() {
     val context = LocalContext.current
     val database = remember { AppDatabase.getDatabase(context) }
     val playlistDao = remember { database.playlistDao() }
+    val coroutineScope = rememberCoroutineScope()
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -61,7 +62,7 @@ fun LocalFile() {
     var playlistTitle by remember { mutableStateOf("") }
     var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
 
-    val coroutineScope = rememberCoroutineScope()
+
 
     // Load playlists when the composable is first created
     LaunchedEffect(Unit) {
