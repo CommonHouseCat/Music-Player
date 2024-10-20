@@ -200,7 +200,12 @@ fun PlaylistScreen(
                             showDeleteDialog = true
                         },
                         onItemClick = {
-                            // Handle song click
+                            val intent = Intent(context, PlaySong::class.java).apply {
+                                putExtra("soundFileName", song.contentUri)
+                                putExtra("displayName", song.displayName)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(intent)
                         }
                     )
                 }
@@ -346,7 +351,7 @@ fun SongItem(song: SongEntity, onDeleteClick: () -> Unit, onItemClick: () -> Uni
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = song.contentUri,
+            text = song.displayName,
             style = MaterialTheme.typography.headlineSmall,
             color = Color.White,
             modifier = Modifier
