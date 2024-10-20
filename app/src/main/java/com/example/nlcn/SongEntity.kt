@@ -19,5 +19,5 @@ data class SongEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val playlistId: Int,
     val displayName: String,
-    val filePath: String
+    val contentUri: String,
 )
