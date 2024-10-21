@@ -1,5 +1,6 @@
 package com.example.nlcn
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,11 +33,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(){
+    val context = LocalContext.current
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)) {
@@ -168,7 +172,10 @@ fun Settings(){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable{},
+                .clickable{
+                    val intent = Intent(context, AboutActivity::class.java)
+                   context.startActivity(intent)
+                },
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

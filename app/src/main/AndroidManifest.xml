@@ -32,5 +32,10 @@
             android:name=".PlaySong"
             android:exported="true" >
         </activity>
+
+        <activity
+            android:name=".AboutActivity"
+            android:exported="true" >
+        </activity>
     </application>
 </manifest>

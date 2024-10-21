@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -168,13 +167,5 @@ fun MyBottomNavBar() {
                 PlayPreLoadedSoundScreen(context = LocalContext.current, soundFileName = soundFileName, displayName = displayName)
             }
         }
-    }
-}
-
-@Preview (showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NLCNTheme {
-        MyBottomNavBar()
     }
 }
