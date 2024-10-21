@@ -106,21 +106,6 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
 
     val coroutineScope = rememberCoroutineScope()
 
-    // Map the displayName to the corresponding image resource
-    val imageResId = when (displayName) {
-        "Rain on Window" -> R.drawable.rain_window
-        "Thunderstorm" -> R.drawable.thunderstorm
-        "Rain in a Forest" -> R.drawable.rain_in_forest
-        "Classic Fireplace" -> R.drawable.classic_fireplace
-        "Fireplace during a storm" -> R.drawable.fireplace_thunderstorm
-        "Camping at night" -> R.drawable.camp_place_night
-        "Creek" -> R.drawable.creek
-        "Beach shore" -> R.drawable.beach_shore
-        "Forest" -> R.drawable.forest
-        "A Silent Car Ride" -> R.drawable.car_ride
-        "People talking in the other room" -> R.drawable.iaminyourwall
-        else -> R.drawable.music_disc
-    }
 
     // MediaPlayer initialization and progress tracking
     DisposableEffect(key1 = soundFileUri) {
@@ -259,7 +244,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
             ) {
                 Box {
                     Image(
-                        painter = painterResource(id = imageResId),
+                        painter = painterResource(id = R.drawable.music_disc),
                         contentDescription = "Track Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
