@@ -58,6 +58,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.nlcn.ui.theme.NLCNTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -69,7 +70,9 @@ class PlayPreLoadedSound:ComponentActivity() {
         val displayName = intent.getStringExtra("displayName") ?: "Unknown Track"
 
         setContent {
-            PlayPreLoadedSoundScreen(context = this,  soundFileName = soundFileName, displayName = displayName)
+            NLCNTheme {
+                PlayPreLoadedSoundScreen(context = this,  soundFileName = soundFileName, displayName = displayName)
+            }
         }
     }
 }

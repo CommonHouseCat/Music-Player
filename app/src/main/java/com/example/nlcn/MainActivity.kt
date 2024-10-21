@@ -80,7 +80,7 @@ fun MyBottomNavBar() {
                 ) {
                     BottomAppBar( // Define the bottom bar itself
                         modifier = Modifier
-                            .clip(RoundedCornerShape(45)) // Clips the BottomAppBar to a rounded shape.
+                            .clip(RoundedCornerShape(8.dp)) // Clips the BottomAppBar to a rounded shape.
                             .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
                             .align(Alignment.BottomCenter)
                             .height(56.dp), // Sets the height of the BottomAppBar.

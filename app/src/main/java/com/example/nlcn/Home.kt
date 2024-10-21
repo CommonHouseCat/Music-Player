@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navController: NavController){
     Column(modifier = Modifier
@@ -140,8 +141,7 @@ fun CategoryRow(sounds: List<SoundItem>, navController: NavController) {
 fun SoundCard(sound: SoundItem, navController: NavController) {
     val soundFileName = when (sound.name) {
         "Rain in a Forest" -> "rain_in_forest.mp3"
-//        "Rain on Window" -> "rain_on_window.mp3"
-        "Rain on Window" -> "test_audio.mp3"
+        "Rain on Window" -> "rain_on_window.mp3"
         "Thunderstorm" -> "thunderstorm.mp3"
 
         "Classic Fireplace" -> "classic_fireplace.mp3"
