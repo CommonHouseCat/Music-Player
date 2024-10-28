@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +55,7 @@ fun Settings(){
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text("Settings",
+                    Text(text = stringResource(id = R.string.settings),
                         color = Color.White,
                         style = MaterialTheme.typography.headlineMedium)
                 }
@@ -76,7 +77,7 @@ fun Settings(){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Theme",
+                text = stringResource(id = R.string.theme),
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -126,44 +127,34 @@ fun Settings(){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Language",
+                text = stringResource(id = R.string.language),
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier
             )
 
-            var expanded by remember { mutableStateOf(false) }
-            var selectedOption by remember { mutableStateOf("English") }
-
-            Box(
-                modifier = Modifier
-                    .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
-                    .clickable { expanded = true }
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = selectedOption,
-                    color = Color.White
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(Color.DarkGray)
+                Box(
+                    modifier = Modifier
+                        .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
+                        .clickable {
+                            // Implement later
+                        }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("English", color = Color.White) },
-                        onClick = {
-                            selectedOption = "English"
-                            expanded = false
+                    Text("En", color = Color.White)
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
+                        .clickable {
+                            // Implement later
                         }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Tiếng Việt", color = Color.White) },
-                        onClick = {
-                            selectedOption = "Tiếng Việt"
-                            expanded = false
-                        }
-                    )
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text("Vi", color = Color.White)
                 }
             }
         }
@@ -172,15 +163,15 @@ fun Settings(){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable{
+                .clickable {
                     val intent = Intent(context, AboutActivity::class.java)
-                   context.startActivity(intent)
+                    context.startActivity(intent)
                 },
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "About",
+                text = stringResource(id = R.string.about),
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier

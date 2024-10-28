@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">NLCN</string>
+
+    <!-- Setting Screen  -->
+    <string name="settings">Cài đặt</string>
+    <string name="theme">Chủ đề</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="about">Giới thiệu</string>
+
+    <!-- About Page -->
+    <string name="about_app">Về Ứng dụng Này</string>
+    <string name="about_description">Đây là một dự án cho một khóa học đại học, được thiết kế để giúp bạn dễ ngủ hơn với sự trợ giúp của nhiều âm thanh trắng êm dịu để làm át đi tất cả suy nghĩ nội tâm. Bạn cũng có thể cá nhân hóa trải nghiệm giấc ngủ bằng cách thêm các tệp âm thanh của riêng bạn từ thiết bị cục bộ.</string>
+    <string name="project_scope">Phạm Vi Dự Án</string>
+    <string name="project_scope_text">Đây là một dự án mã nguồn mở, phi thương mại được phát triển cho mục đích giáo dục. Hãy sử dụng nó theo ý muốn của bạn.</string>
+    <string name="technology">Công Nghệ</string>
+    <string name="technology_text">Được xây dựng với Jetpack Compose, Kotlin, cơ sở dữ liệu Room, Datastore và MediaPlayer.</string>
+    <string name="disclaimer">Tuyên Bố Miễn Trừ</string>
+    <string name="disclaimer_text">Ứng dụng này được cung cấp nguyên trạng, không có bảo hành. Nó không nhằm mục đích sử dụng y tế và không nên thay thế lời khuyên chuyên môn.</string>
+    <string name="credits">Ghi Công</string>
+    <string name="credits_text">Phát triển bởi: Nguyễn Quang Vinh\\nMSSV: B2125727\\nThuộc về: Đồ án - Chuyên đề (CT501H) - Đại học Cần Thơ</string>
 </resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NLCN</string>
+
+    <!-- Setting Screen  -->
+    <string name="settings">Settings</string>
+    <string name="theme">Theme</string>
+    <string name="language">Language</string>
+    <string name="about">About</string>
+
+    <!-- About Page -->
+    <string name="about_app">About This App</string>
+    <string name="about_description">This app is a university course project, designed to help you fall asleep easier with the help of a variety of soothing white-noise sounds to drown otu all of one\'s inner thoughts. You can also personalize the sleeping excercise by adding your own audio files from the local device.</string>
+    <string name="project_scope">Project Scope</string>
+    <string name="project_scope_text">This is an open-source, non-commercial project developed for educational purposes. Do with it what you will.</string>
+    <string name="technology">Technology</string>
+    <string name="technology_text">Built with Jetpack Compose, Kotlin, Room database, Datastore, and MediaPlayer.</string>
+    <string name="disclaimer">Disclaimer</string>
+    <string name="disclaimer_text">This app is provided as-is, without warranty. It is not intended for medical use and should not replace professional advice.</string>
+    <string name="credits">Credits</string>
+    <string name="credits_text">Developed by: Nguyễn Quang Vinh\\nStudent ID: B2125727\\nAs part of: Specialized Topics Course (CT501H) - CanTho University</string>
+</resources>
