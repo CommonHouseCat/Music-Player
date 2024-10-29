@@ -26,12 +26,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 
 import com.example.nlcn.ui.theme.NLCNTheme
+import java.util.Locale
 
 class AboutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +51,21 @@ class AboutActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(context: Context) {
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
+
+
    Surface (
        modifier = Modifier.fillMaxSize(),
        color = Color.Black
@@ -56,7 +74,7 @@ fun AboutScreen(context: Context) {
            TopAppBar(
                title = {
                    Row(verticalAlignment = Alignment.CenterVertically) {
-                       Text(text = "About", color = Color.White)
+                       Text(text = with(updatedContext) { getString(R.string.about) }, color = Color.White)
                        Spacer(modifier = Modifier.width(8.dp))
                        Icon(
                            imageVector = Icons.Outlined.Info,
@@ -83,9 +101,9 @@ fun AboutScreen(context: Context) {
                    .padding(16.dp)
            ) {
                // General app description
-               Text("About This App", color = Color.White, style = MaterialTheme.typography.headlineSmall)
+               Text(text = with(updatedContext) { getString(R.string.about_app) }, color = Color.White, style = MaterialTheme.typography.headlineSmall)
                Text(
-                   "This app is a university course project, designed to help your fall asleep easier and with the help of a variety of soothing white noise sounds to drown out all of one's inner thoughts. You can also personalize the sleeping experience by adding you own audio files from the local device.",
+                   text = with(updatedContext) { getString(R.string.about_description) },
                    color = Color.White,
                    style = MaterialTheme.typography.bodyMedium,
                    textAlign = TextAlign.Justify
@@ -94,9 +112,9 @@ fun AboutScreen(context: Context) {
                Spacer(modifier = Modifier.height(12.dp))
 
                // Project Scope
-               Text("Project Scope", color = Color.White, style = MaterialTheme.typography.headlineSmall)
+               Text(text = with(updatedContext) { getString(R.string.project_scope) }, color = Color.White, style = MaterialTheme.typography.headlineSmall)
                Text(
-                   "This is an open-source, non-commercial project developed for educational purposes. Do with it what you will.",
+                   text = with(updatedContext) { getString(R.string.project_scope_text) },
                    color = Color.White,
                    style = MaterialTheme.typography.bodyMedium,
                    textAlign = TextAlign.Justify
@@ -105,9 +123,9 @@ fun AboutScreen(context: Context) {
                Spacer(modifier = Modifier.height(12.dp))
 
                // Technology Used
-               Text("Technology", color = Color.White, style = MaterialTheme.typography.headlineSmall)
+               Text(text = with(updatedContext) { getString(R.string.technology) }, color = Color.White, style = MaterialTheme.typography.headlineSmall)
                Text(
-                   "Built with Jetpack Compose, Kotlin, Room database, and MediaPlayer.",
+                   text = with(updatedContext) { getString(R.string.technology_text) },
                    color = Color.White,
                    style = MaterialTheme.typography.bodyMedium,
                    textAlign = TextAlign.Justify
@@ -116,9 +134,9 @@ fun AboutScreen(context: Context) {
                Spacer(modifier = Modifier.height(12.dp))
 
                // Technology Used
-               Text("Disclaimer", color = Color.White, style = MaterialTheme.typography.headlineSmall)
+               Text(text = with(updatedContext) { getString(R.string.disclaimer) }, color = Color.White, style = MaterialTheme.typography.headlineSmall)
                Text(
-                   "This app is provided as-is, without warranty. It is not intended for medical use and should not replace professional advice.",
+                   text = with(updatedContext) { getString(R.string.disclaimer_text) },
                    color = Color.White,
                    style = MaterialTheme.typography.bodyMedium,
                    textAlign = TextAlign.Justify
@@ -127,9 +145,9 @@ fun AboutScreen(context: Context) {
                Spacer(modifier = Modifier.height(12.dp))
 
                // Credit
-               Text("Credits", color = Color.White, style = MaterialTheme.typography.headlineSmall)
+               Text(text = with(updatedContext) { getString(R.string.credits) }, color = Color.White, style = MaterialTheme.typography.headlineSmall)
                Text(
-                   "Developed by: Nguyễn Quang Vinh\nStudent ID: B2125727\nAs part of: Project - Specialized Topics Course (CT501H) - CanTho University",
+                   text = with(updatedContext) { getString(R.string.credits_text) },
                    color = Color.White,
                    style = MaterialTheme.typography.bodyMedium,
                    textAlign = TextAlign.Justify

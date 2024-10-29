@@ -1,5 +1,7 @@
 package com.example.nlcn
 
+import android.app.Application
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,8 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,21 +26,57 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
+import java.util.Locale
+
+class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+    private val preferenceDataStore = PreferenceDataStore(application)
+
+    suspend fun saveLanguage(language: String) {
+        preferenceDataStore.saveLanguage(language)
+    }
+
+    suspend fun saveTheme(theme: String) {  // Add theme saving function
+        preferenceDataStore.saveTheme(theme)
+    }
+
+    fun updateLocale(context: Context, language: String): Context {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        return context.createConfigurationContext(configuration)
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Settings(){
+fun Settings(viewModel: SettingsViewModel = viewModel()){
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+    val currentTheme = dataStore.getTheme.collectAsState(initial = "dark")  // Add theme state
+
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        viewModel.updateLocale(context, currentLanguage.value)
+    }
+
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -55,7 +91,8 @@ fun Settings(){
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = stringResource(id = R.string.settings),
+                    Text(
+                        text = with(updatedContext) { getString(R.string.settings) },
                         color = Color.White,
                         style = MaterialTheme.typography.headlineMedium)
                 }
@@ -77,43 +114,41 @@ fun Settings(){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.theme),
+                text = with(updatedContext) { getString(R.string.theme) },
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall
             )
-
-            var expanded by remember { mutableStateOf(false) }
-            var selectedOption by remember { mutableStateOf("Dark Mode") }
-
-            Box(
-                modifier = Modifier
-                    .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
-                    .clickable { expanded = true }
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = selectedOption,
-                    color = Color.White
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(Color.DarkGray)
+                Box(
+                    modifier = Modifier
+                        .background(
+                            if (currentTheme.value == "dark") Color.Gray else Color.DarkGray,
+                            shape = RoundedCornerShape(4.dp))
+                        .clickable {
+                            scope.launch {
+                                viewModel.saveTheme("dark")
+                            }
+                        }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Dark Mode", color = Color.White) },
-                        onClick = {
-                            selectedOption = "Dark Mode"
-                            expanded = false
+                    Text(with(updatedContext) { getString(R.string.DarkMode) }, color = Color.White)
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            if (currentTheme.value == "light") Color.Gray else Color.DarkGray,
+                            shape = RoundedCornerShape(4.dp))
+                        .clickable {
+                            scope.launch {
+                                viewModel.saveTheme("light")
+                            }
                         }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Light Mode", color = Color.White) },
-                        onClick = {
-                            selectedOption = "Light Mode"
-                            expanded = false
-                        }
-                    )
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text(with(updatedContext) { getString(R.string.LightMode) }, color = Color.White)
                 }
             }
         }
@@ -127,19 +162,22 @@ fun Settings(){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.language),
+                text = with(updatedContext) { getString(R.string.language) },
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall,
             )
-
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
+                        .background(
+                            if (currentLanguage.value == "en") Color.Gray else Color.DarkGray,
+                            shape = RoundedCornerShape(4.dp))
                         .clickable {
-                            // Implement later
+                            scope.launch {
+                                viewModel.saveLanguage("en")
+                            }
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
@@ -148,9 +186,13 @@ fun Settings(){
 
                 Box(
                     modifier = Modifier
-                        .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
+                        .background(
+                            if (currentLanguage.value == "vi") Color.Gray else Color.DarkGray,
+                            shape = RoundedCornerShape(4.dp))
                         .clickable {
-                            // Implement later
+                            scope.launch {
+                                viewModel.saveLanguage("vi")
+                            }
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
@@ -171,7 +213,7 @@ fun Settings(){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.about),
+                text = with(updatedContext) { getString(R.string.about) },
                 color = Color.White,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier
