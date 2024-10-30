@@ -37,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -280,7 +281,12 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                         currentPosition = newValue * duration
                     }
                 },
-                modifier = Modifier.padding(horizontal = 36.dp)
+                modifier = Modifier.padding(horizontal = 36.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Blue,
+                    inactiveTrackColor = Color.LightGray
+                )
             )
 
             // Display current time and duration
