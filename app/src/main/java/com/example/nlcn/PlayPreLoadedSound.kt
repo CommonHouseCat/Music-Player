@@ -210,7 +210,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = { (context as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",  tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

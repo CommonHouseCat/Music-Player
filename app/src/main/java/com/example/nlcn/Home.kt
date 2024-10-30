@@ -2,6 +2,7 @@
 
 package com.example.nlcn
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,10 +37,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navController: NavController){
+fun Home(
+    navController: NavController,
+    context: Context
+){
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)) {
@@ -50,7 +71,8 @@ fun Home(navController: NavController){
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text("Home",
+                    Text(
+                        with(updatedContext) { getString(R.string.home) },
                         color = Color.White,
                         style = MaterialTheme.typography.headlineMedium)
                 }
@@ -66,47 +88,47 @@ fun Home(navController: NavController){
                 .background(Color.Black)
                 .padding(8.dp)
         ) {
-            item { CategoryTitle(title = "Rain") }
+            item { CategoryTitle(title = with(updatedContext) { getString(R.string.rainTitle) }) }
             item {
                 CategoryRow(
-                    sounds = listOf(SoundItem("Rain on Window", R.drawable.rain_window),
-                        SoundItem("Thunderstorm", R.drawable.thunderstorm),
-                        SoundItem("Rain in a Forest", R.drawable.rain_in_forest)
+                    sounds = listOf(SoundItem(with(updatedContext) { getString(R.string.rainOnWindow) }, R.drawable.rain_window),
+                        SoundItem(with(updatedContext) { getString(R.string.thunderstorm) }, R.drawable.thunderstorm),
+                        SoundItem(with(updatedContext) { getString(R.string.rainInForest) }, R.drawable.rain_in_forest)
                     ),
                     navController = navController
                 )
             }
 
-            item { CategoryTitle(title = "Fireplace") }
+            item { CategoryTitle(title = with(updatedContext) { getString(R.string.fireplaceTitle) }) }
             item {
                 CategoryRow(
                     sounds = listOf(
-                        SoundItem("Classic Fireplace", R.drawable.classic_fireplace),
-                        SoundItem("Fireplace during a storm", R.drawable.fireplace_thunderstorm)
+                        SoundItem(with(updatedContext) { getString(R.string.classicFireplace) }, R.drawable.classic_fireplace),
+                        SoundItem(with(updatedContext) { getString(R.string.fireplaceThunderstorm) }, R.drawable.fireplace_thunderstorm)
                     ),
                     navController = navController
                 )
             }
 
-            item { CategoryTitle(title = "Nature") }
+            item { CategoryTitle(title = with(updatedContext) { getString(R.string.natureTitle) }) }
             item {
                 CategoryRow(
                     sounds = listOf(
-                        SoundItem("Camping at night", R.drawable.camp_place_night),
-                        SoundItem("Creek", R.drawable.creek),
-                        SoundItem("Beach shore", R.drawable.beach_shore),
-                        SoundItem("Forest", R.drawable.forest)
+                        SoundItem(with(updatedContext) { getString(R.string.campingAtNight) }, R.drawable.camp_place_night),
+                        SoundItem(with(updatedContext) { getString(R.string.creek) }, R.drawable.creek),
+                        SoundItem(with(updatedContext) { getString(R.string.beachShore) }, R.drawable.beach_shore),
+                        SoundItem(with(updatedContext) { getString(R.string.forest) }, R.drawable.forest)
                     ),
                     navController = navController
                 )
             }
 
-            item { CategoryTitle(title = "Background Noise") }
+            item { CategoryTitle(title = with(updatedContext) { getString(R.string.backgroundNoiseTitle) }) }
             item {
                 CategoryRow(
                     sounds = listOf(
-                        SoundItem("A Silent Car Ride", R.drawable.car_ride),
-                        SoundItem("People talking in the other room", R.drawable.iaminyourwall)
+                        SoundItem(with(updatedContext) { getString(R.string.silentCarRide) }, R.drawable.car_ride),
+                        SoundItem(with(updatedContext) { getString(R.string.peopleTalkingInTheOtherRoom) }, R.drawable.iaminyourwall)
                     ),
                     navController = navController
                 )

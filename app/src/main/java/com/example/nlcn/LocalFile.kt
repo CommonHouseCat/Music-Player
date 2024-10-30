@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,8 @@ fun LocalFile() {
     val database = remember { AppDatabase.getDatabase(context) }
     val playlistDao = remember { database.playlistDao() }
     val coroutineScope = rememberCoroutineScope()
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -62,7 +65,16 @@ fun LocalFile() {
     var playlistTitle by remember { mutableStateOf("") }
     var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
 
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
 
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
 
     // Load playlists when the composable is first created
     LaunchedEffect(Unit) {
@@ -87,7 +99,7 @@ fun LocalFile() {
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        "Local File",
+                        with(updatedContext) { getString(R.string.localFile) },
                         color = Color.White,
                         style = MaterialTheme.typography.headlineMedium
                     )
@@ -135,13 +147,13 @@ fun LocalFile() {
                 showAddDialog = false
                 playlistTitle = ""
             },
-            title = { Text("Create new playlist", color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.createNewPlaylist) }, color = Color.White) },
             text = {
                 Column {
                     TextField(
                         value = playlistTitle,
                         onValueChange = { playlistTitle = it },
-                        label = { Text("Playlist Title", color = Color.LightGray) },
+                        label = { Text(with(updatedContext) { getString(R.string.playlistTitle) }, color = Color.LightGray) },
                         singleLine = true,
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -164,7 +176,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text("Confirm", color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.confirm) }, color = Color.White)
                 }
             },
             dismissButton = {
@@ -172,7 +184,7 @@ fun LocalFile() {
                     showAddDialog = false
                     playlistTitle = ""
                 }) {
-                    Text("Cancel", color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
                 }
             },
             containerColor = Color.DarkGray
@@ -185,8 +197,8 @@ fun LocalFile() {
                 showDeleteDialog = false
                 playlistToDelete = null
             },
-            title = { Text("Delete Playlist", color = Color.White) },
-            text = { Text("Do you want to delete ${playlistToDelete?.title}?", color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.deletePlaylist) }, color = Color.White) },
+            text = { Text(with(updatedContext) { getString(R.string.deletePlaylistConfirmation) }, color = Color.White) },
             confirmButton = {
                 TextButton(onClick = {
                     playlistToDelete?.let { playlist ->
@@ -198,7 +210,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text("Delete", color = Color.Red)
+                    Text(with(updatedContext) { getString(R.string.delete) }, color = Color.Red)
                 }
             },
             dismissButton = {
@@ -206,7 +218,7 @@ fun LocalFile() {
                     showDeleteDialog = false
                     playlistToDelete = null
                 }) {
-                    Text("Cancel", color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
                 }
             },
             containerColor = Color.DarkGray
@@ -217,6 +229,21 @@ fun LocalFile() {
 
 @Composable
 fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClick: () -> Unit) {
+    val context = LocalContext.current
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -235,7 +262,9 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
             )
 
             Text(
-                text = "Created on: ${SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(Date(playlist.createTime))}",
+                text = with(updatedContext) {
+                    getString(R.string.createdOn) + " " + SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(Date(playlist.createTime))
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.LightGray,
                 modifier = Modifier.padding(top = 4.dp)

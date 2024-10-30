@@ -2,6 +2,35 @@
 <resources>
     <string name="app_name">NLCN</string>
 
+    <!--  Home Screen  -->
+    <string name="home">Trang chủ</string>
+    <string name="rainTitle">Mưa</string>
+    <string name="rainOnWindow">Mưa rơi trên cửa sổ</string>
+    <string name="thunderstorm">Giông bão</string>
+    <string name="rainInForest">Mưa trong rừng</string>
+    <string name="fireplaceTitle">Lò sưởi</string>
+    <string name="classicFireplace">Lò sưởi cổ điển</string>
+    <string name="fireplaceThunderstorm">Lò sưởi trong cơn bão</string>
+    <string name="natureTitle">Thiên nhiên</string>
+    <string name="campingAtNight">Cắm trại đêm khuya</string>
+    <string name="creek">Suối</string>
+    <string name="beachShore">Bờ biển</string>
+    <string name="forest">Rừng</string>
+    <string name="backgroundNoiseTitle">Tiếng ồn nền</string>
+    <string name="silentCarRide">Chuyến xe yên tĩnh</string>
+    <string name="peopleTalkingInTheOtherRoom">Tiếng người trò chuyện trong phòng khác</string>
+
+    <!-- LocalFile -->
+    <string name="localFile">File cục bộ</string>
+    <string name="createNewPlaylist">Tạo danh sách phát mới</string>
+    <string name="playlistTitle">Tiêu đề danh sách phát</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="deletePlaylist">Xóa danh sách phát</string>
+    <string name="deletePlaylistConfirmation">Bạn có muốn xóa danh sách phát này không?</string>
+    <string name="createdOn">Được tạo vào:</string>
+
     <!-- Setting Screen  -->
     <string name="settings">Cài đặt</string>
     <string name="theme">Chế độ</string>

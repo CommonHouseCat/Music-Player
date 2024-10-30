@@ -156,7 +156,7 @@ fun MyBottomNavBar() {
             modifier = Modifier.padding(paddingValues) // Apply padding values to the NavHost.
         ) {
             // Composable functions defining the routes to different screens.
-            composable(Screens.Home.screen) { Home(navController) } // Home.kt file.
+            composable(Screens.Home.screen) { Home(navController, LocalContext.current) } // Home.kt file.
             composable(Screens.LocalFile.screen) { LocalFile() } // LocalFile.kt file.
             composable(Screens.Settings.screen) { Settings() } // Settings.kt file.
 
