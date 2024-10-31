@@ -67,25 +67,25 @@ fun Home(
                 Row {
                     Icon(imageVector = Icons.Default.Home,
                         contentDescription = "Home Icon",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         with(updatedContext) { getString(R.string.home) },
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.headlineMedium)
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Black
+                containerColor = MaterialTheme.colorScheme.surface
             )
         )
 
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.secondary)
                 .padding(8.dp)
         ) {
             item { CategoryTitle(title = with(updatedContext) { getString(R.string.rainTitle) }) }
@@ -142,7 +142,7 @@ fun CategoryTitle(title: String) {
     Text(
         text = title,
         fontSize = 24.sp,
-        color = Color.White,
+        color =  MaterialTheme.colorScheme.onPrimary,
         modifier = Modifier.padding(8.dp)
     )
 }

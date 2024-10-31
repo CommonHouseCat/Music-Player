@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Home
@@ -21,6 +20,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -28,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -75,15 +74,15 @@ fun MyBottomNavBar() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding() // Adds padding to avoid overlapping with system navigation bars.
-                        .background(Color.Black)
+                        .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     BottomAppBar( // Define the bottom bar itself
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp)) // Clips the BottomAppBar to a rounded shape.
+//                            .clip(RoundedCornerShape(8.dp)) // Clips the BottomAppBar to a rounded shape.
                             .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
                             .align(Alignment.BottomCenter)
                             .height(56.dp), // Sets the height of the BottomAppBar.
-                        containerColor = Color(0xFF8031A7),
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentPadding = PaddingValues(0.dp)
                     ) {
 

@@ -17,7 +17,7 @@ import com.example.nlcn.PreferenceDataStore
 private val DarkColorScheme = darkColorScheme(
     primary = Color.Black,
     secondary = Color.Black,
-    tertiary = Color.Gray,
+    tertiary = Color.LightGray,
     background = Color.Black,
     surface = Color.Black,
     onPrimary = Color.White,
@@ -25,19 +25,23 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = Color.DarkGray,
     onBackground = Color.White,
     onSurface = Color.Black,
+    secondaryContainer = Color(0xFFFF4500),
+    tertiaryContainer = Color(0xFF8031A7)
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color.White,
     secondary = Color.White,
-    tertiary = Color.LightGray,
+    tertiary = Color.Black,
     background = Color.Black,
     surface = Color.White,
     onPrimary = Color.Black,
     onSecondary = Color.Black,
-    onTertiary = Color.Black,
+    onTertiary = Color.LightGray,
     onBackground = Color.Black,
     onSurface = Color.White,
+    secondaryContainer = Color.Red,
+    tertiaryContainer = Color(0xFFFFA500)
 )
 
 @Composable

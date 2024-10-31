@@ -86,7 +86,7 @@ fun LocalFile() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.secondary)
     ) {
         TopAppBar(
             title = {
@@ -94,24 +94,24 @@ fun LocalFile() {
                     Icon(
                         imageVector = Icons.Default.Folder,
                         contentDescription = "Local File",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         with(updatedContext) { getString(R.string.localFile) },
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.headlineMedium
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
             actions = {
                 IconButton(onClick = { showAddDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Playlist",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -249,7 +249,7 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
             .fillMaxWidth()
             .padding( start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.DarkGray)
+            .background(MaterialTheme.colorScheme.onTertiary)
             .clickable (onClick = onItemClick),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -258,7 +258,7 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
             Text(
                 text = playlist.title,
                 style = MaterialTheme.typography.headlineSmall,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
 
             Text(
@@ -266,7 +266,7 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
                     getString(R.string.createdOn) + " " + SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(Date(playlist.createTime))
                 },
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -275,7 +275,7 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
-                tint = Color.Red,
+                tint = MaterialTheme.colorScheme.secondaryContainer,
                 modifier = Modifier.size(24.dp)
             )
         }
