@@ -160,22 +160,30 @@ fun CategoryRow(sounds: List<SoundItem>, navController: NavController) {
 @Composable
 fun SoundCard(sound: SoundItem, navController: NavController) {
     val soundFileName = when (sound.name) {
-        "Rain in a Forest" -> "rain_in_forest.mp3"
         "Rain on Window" -> "rain_on_window.mp3"
         "Thunderstorm" -> "thunderstorm.mp3"
-
+        "Rain in a Forest" -> "rain_in_forest.mp3"
         "Classic Fireplace" -> "classic_fireplace.mp3"
-
         "Fireplace during a storm" -> "fireplace_thunderstorm.mp3"
-
         "Camping at night" -> "night_at_camp.mp3"
         "Creek" -> "creek.mp3"
         "Beach Shore" -> "beach_shore.mp3"
         "Forest" -> "forest.mp3"
-
         "A Silent Car Ride" -> "silent_car_ride.mp3"
         "People talking in the other room" -> "people_taking_in_the_other_room.mp3"
 
+
+        "Mưa rơi trên cửa sổ" -> "rain_on_window.mp3"
+        "Giông bão" -> "thunderstorm.mp3"
+        "Mưa trong rừng" -> "rain_in_forest.mp3"
+        "Lò sưởi cổ điển" -> "classic_fireplace.mp3"
+        "Lò sưởi trong cơn bão" -> "fireplace_thunderstorm.mp3"
+        "Cắm trại đêm khuya" -> "night_at_camp.mp3"
+        "Suối" -> "creek.mp3"
+        "Bờ biển" -> "beach_shore.mp3"
+        "Rừng" -> "forest.mp3"
+        "Chuyến xe yên tĩnh" -> "silent_car_ride.mp3"
+        "Tiếng trò chuyện phòng bên" -> "people_taking_in_the_other_room.mp3"
         else -> ""
     }
 

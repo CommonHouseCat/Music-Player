@@ -45,6 +45,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -62,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import com.example.nlcn.ui.theme.NLCNTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class PlayPreLoadedSound:ComponentActivity() {
@@ -82,22 +84,34 @@ class PlayPreLoadedSound:ComponentActivity() {
 @Composable
 fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayName: String) {
     val mediaPlayer = remember { MediaPlayer() }
-    var isPlaying by remember { mutableStateOf(true) }
-    var currentPosition by remember { mutableFloatStateOf(0f) }
-    var duration by remember { mutableFloatStateOf(0f) }
-    var isRepeatOn by remember { mutableStateOf(false) }
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+    val coroutineScope = rememberCoroutineScope()
     val mainActivity = LocalContext.current as MainActivity
 
     var isTimerOn by remember { mutableStateOf(false) }
     var timerDuration by remember { mutableIntStateOf(0) }
     var showTimerPicker by remember { mutableStateOf(false) }
     var remainingTime by remember { mutableIntStateOf(0) }
-
-    val coroutineScope = rememberCoroutineScope()
+    var isPlaying by remember { mutableStateOf(true) }
+    var currentPosition by remember { mutableFloatStateOf(0f) }
+    var duration by remember { mutableFloatStateOf(0f) }
+    var isRepeatOn by remember { mutableStateOf(false) }
 
     // Hide the bottom bar when the screen is displayed
     LaunchedEffect(Unit) {
         mainActivity.showBottomBar = false
+    }
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
     }
 
     // Map the displayName to the corresponding image resource
@@ -113,8 +127,21 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
         "Forest" -> R.drawable.forest
         "A Silent Car Ride" -> R.drawable.car_ride
         "People talking in the other room" -> R.drawable.iaminyourwall
+
+        "Mưa rơi trên cửa sổ" -> R.drawable.rain_window
+        "Giông bão" -> R.drawable.thunderstorm
+        "Mưa trong rừng" -> R.drawable.rain_in_forest
+        "Lò sưởi cổ điển" -> R.drawable.classic_fireplace
+        "Lò sưởi trong cơn bão" -> R.drawable.fireplace_thunderstorm
+        "Cắm trại đêm khuya" ->  R.drawable.camp_place_night
+        "Suối" -> R.drawable.creek
+        "Bờ biển" -> R.drawable.beach_shore
+        "Rừng" -> R.drawable.forest
+        "Chuyến xe yên tĩnh" -> R.drawable.car_ride
+        "Tiếng trò chuyện phòng bên" -> R.drawable.iaminyourwall
         else -> R.drawable.music_disc
     }
+
 
     // MediaPlayer initialization and progress tracking
     DisposableEffect(key1 = soundFileName) {
@@ -179,31 +206,42 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
 
         AlertDialog(
             onDismissRequest = { onDismissRequest() },
-            title = { Text("Set Timer (in minutes)") },
+            title = { Text(with(updatedContext) { getString(R.string.setTimer) }, color = Color.White)  },
             text = {
                 Column {
                     // Display the selected time in minutes directly
-                    Text(text = "Duration: ${selectedTime.toInt()} minutes")
+                    Text(
+                        text = with(updatedContext){
+                            getString(R.string.Duration) + " ${selectedTime.toInt()}"},
+                        color = Color.White)
                     Slider(
                         value = selectedTime,
                         onValueChange = { selectedTime = it },
-                        valueRange = 0f..480f,  // Max 480 minutes (8 hours)
-                        steps = 479  // 479 steps for a total of 480 options
+                        valueRange = 0f..480f, // Max 480 minutes (8 hours)
+                        steps = 479 ,
+                        colors = SliderDefaults.colors(
+                            thumbColor = Color.White,
+                            activeTrackColor = Color.Blue,
+                            inactiveTrackColor = Color.LightGray
+                        )
                     )
                 }
             },
             confirmButton = {
                 TextButton(onClick = { onTimeSelected(selectedTime.toInt()) }) {
-                    Text("Confirm")
+                    Text(with(updatedContext) { getString(R.string.confirm) },  color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text("Cancel")
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
                 }
             }
         )
     }
+
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -227,10 +265,13 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+
+
             Spacer(modifier = Modifier.height(50.dp))
 
             Text( // Display the "Now Playing" text
-                text = "Now Playing",
+                with(updatedContext) { getString(R.string.nowPlaying) },
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White,
                 modifier = Modifier.padding(top = 4.dp)
@@ -264,7 +305,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
 
             if (isTimerOn) {
                 Text(
-                    text = "Timer: ${formatTimeForCounter(remainingTime)}",
+                    text = with(updatedContext) {getString(R.string.timer) + " : ${formatTimeForCounter(remainingTime)}"},
                     color = Color.White,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -395,3 +436,4 @@ fun formatTimeForCounter(timeMs: Int): String {
     val seconds = (timeMs) % 60
     return String.format("%02d:%02d", minutes, seconds)
 }
+

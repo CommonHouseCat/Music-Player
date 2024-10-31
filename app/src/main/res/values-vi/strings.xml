@@ -18,7 +18,7 @@
     <string name="forest">Rừng</string>
     <string name="backgroundNoiseTitle">Tiếng ồn nền</string>
     <string name="silentCarRide">Chuyến xe yên tĩnh</string>
-    <string name="peopleTalkingInTheOtherRoom">Tiếng người trò chuyện trong phòng khác</string>
+    <string name="peopleTalkingInTheOtherRoom">Tiếng trò chuyện phòng bên</string>
 
     <!-- LocalFile -->
     <string name="localFile">File cục bộ</string>
@@ -30,6 +30,19 @@
     <string name="deletePlaylist">Xóa danh sách phát</string>
     <string name="deletePlaylistConfirmation">Bạn có muốn xóa danh sách phát này không?</string>
     <string name="createdOn">Được tạo vào:</string>
+
+    <!--  PlayPreLoadedSound Screen  -->
+    <string name="nowPlaying">Đang phát</string>
+    <string name="setTimer">Đặt hẹn giờ</string>
+    <string name="Duration">Thời lượng (phút):</string>
+    <string name="timer">Thời gian còn lại:</string>
+
+    <!-- Playlist Activity Screen -->
+    <string name="addAudioFromDevice">Thêm âm thanh từ thiết bị</string>
+    <string name="displayName">Tên hiển thị</string>
+    <string name="selectedFile">Tệp đã chọn</string>
+    <string name="deleteSong">Xóa bài hát</string>
+    <string name="deleteSongConfirmation">Bạn có muốn xóa bài hát này không?</string>
 
     <!-- Setting Screen  -->
     <string name="settings">Cài đặt</string>

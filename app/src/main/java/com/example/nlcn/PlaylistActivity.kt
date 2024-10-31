@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import com.example.nlcn.ui.theme.NLCNTheme
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.Locale
 
 class PlaylistActivity : ComponentActivity() {
     private lateinit var pickAudioFileLauncher: ActivityResultLauncher<String>
@@ -80,13 +82,9 @@ class PlaylistActivity : ComponentActivity() {
 
                     // First try to verify we can read the file
                     contentResolver.openInputStream(uri)?.use { _ ->
-                        // If we get here, we can read the file
-                        // Now try to take persistent permission if possible
                         try {
                             contentResolver.takePersistableUriPermission(uri, takeFlags)
                         } catch (e: SecurityException) {
-                            // If we can't take persistent permission, that's okay
-                            // as long as we can read the file
                             Log.d("PlaylistActivity", "Couldn't take persistent permission, but file is readable")
                         }
 
@@ -143,12 +141,25 @@ fun PlaylistScreen(
     val database = remember { AppDatabase.getDatabase(context) }
     val songDao = remember { database.songDao() }
     val coroutineScope = rememberCoroutineScope()
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var songToDelete by remember { mutableStateOf<SongEntity?>(null) }
     var displayName by remember { mutableStateOf("") }
     var songs by remember { mutableStateOf<List<SongEntity>>(emptyList()) }
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
 
     LaunchedEffect(playlistId) {
         songs = songDao.getSongsForPlaylist(playlistId)
@@ -304,8 +315,9 @@ fun PlaylistScreen(
                     showDeleteDialog = false
                     songToDelete = null
                 },
-                title = { Text("Delete Song", color = Color.White) },
-                text = { Text("Do you want to delete ${songToDelete?.displayName}?", color = Color.White) },
+                title = { Text(with(updatedContext) { getString(R.string.deleteSong) }, color = Color.White) },
+                text = {
+                    Text((with(updatedContext) { getString(R.string.deleteSongConfirmation) + "\n ${songToDelete?.displayName}"}) , color = Color.White) },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -319,7 +331,7 @@ fun PlaylistScreen(
                             }
                         }
                     ) {
-                        Text("Delete", color = Color.Red)
+                        Text(with(updatedContext) {getString(R.string.delete)}, color = Color.Red)
                     }
                 },
                 dismissButton = {
@@ -329,7 +341,7 @@ fun PlaylistScreen(
                             songToDelete = null
                         }
                     ) {
-                        Text("Cancel", color = Color.White)
+                        Text(with(updatedContext) {getString(R.string.cancel)}, color = Color.White)
                     }
                 },
                 containerColor = Color.DarkGray

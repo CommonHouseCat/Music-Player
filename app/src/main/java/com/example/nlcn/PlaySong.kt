@@ -41,6 +41,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -48,6 +49,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -64,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import com.example.nlcn.ui.theme.NLCNTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class PlaySong:ComponentActivity() {
@@ -79,7 +82,6 @@ class PlaySong:ComponentActivity() {
             contentResolver.takePersistableUriPermission(uri, takeFlags)
         } catch (e: SecurityException) {
             Log.d("PlaySong", "Couldn't take persistent permission: ${e.message}")
-            // Continue anyway as we might still be able to play the file
         }
 
         setContent {
@@ -94,18 +96,29 @@ class PlaySong:ComponentActivity() {
 @Composable
 fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) {
     val mediaPlayer = remember { MediaPlayer() }
+    val coroutineScope = rememberCoroutineScope()
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+
     var isPlaying by remember { mutableStateOf(true) }
     var currentPosition by remember { mutableFloatStateOf(0f) }
     var duration by remember { mutableFloatStateOf(0f) }
     var isRepeatOn by remember { mutableStateOf(false) }
-
     var isTimerOn by remember { mutableStateOf(false) }
     var timerDuration by remember { mutableIntStateOf(0) }
     var showTimerPicker by remember { mutableStateOf(false) }
     var remainingTime by remember { mutableIntStateOf(0) }
 
-    val coroutineScope = rememberCoroutineScope()
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
 
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
 
     // MediaPlayer initialization and progress tracking
     DisposableEffect(key1 = soundFileUri) {
@@ -177,27 +190,35 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
 
         AlertDialog(
             onDismissRequest = { onDismissRequest() },
-            title = { Text("Set Timer (in minutes)") },
+            title = { Text(with(updatedContext) { getString(R.string.setTimer) }, color = Color.White) },
             text = {
                 Column {
                     // Display the selected time in minutes directly
-                    Text(text = "Duration: ${selectedTime.toInt()} minutes")
+                    Text(
+                        text = with(updatedContext){
+                            getString(R.string.Duration) + " ${selectedTime.toInt()}"},
+                        color = Color.White)
                     Slider(
                         value = selectedTime,
                         onValueChange = { selectedTime = it },
-                        valueRange = 0f..480f,  // Max 480 minutes (8 hours)
-                        steps = 479  // 479 steps for a total of 480 options
+                        valueRange = 0f..480f,
+                        steps = 479,
+                        colors = SliderDefaults.colors(
+                            thumbColor = Color.White,
+                            activeTrackColor = Color.Blue,
+                            inactiveTrackColor = Color.LightGray
+                        )
                     )
                 }
             },
             confirmButton = {
                 TextButton(onClick = { onTimeSelected(selectedTime.toInt()) }) {
-                    Text("Confirm")
+                    Text(with(updatedContext) { getString(R.string.confirm) },  color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text("Cancel")
+                    Text(with(updatedContext) { getString(R.string.cancel) },  color = Color.White)
                 }
             }
         )
@@ -208,7 +229,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = { (context as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -228,7 +249,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
             Spacer(modifier = Modifier.height(50.dp))
 
             Text( // Display the "Now Playing" text
-                text = "Now Playing",
+                text = with(updatedContext) { getString(R.string.nowPlaying) },
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White,
                 modifier = Modifier.padding(top = 4.dp)
@@ -262,7 +283,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
 
             if (isTimerOn) {
                 Text(
-                    text = "Timer: ${formatTimeForCounter2(remainingTime)}",
+                    text = with(updatedContext) {getString(R.string.timer) + " : ${formatTimeForCounter2(remainingTime)}"},
                     color = Color.White,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -279,7 +300,12 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
                         currentPosition = newValue * duration
                     }
                 },
-                modifier = Modifier.padding(horizontal = 36.dp)
+                modifier = Modifier.padding(horizontal = 36.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Blue,
+                    inactiveTrackColor = Color.LightGray
+                )
             )
 
             // Display current time and duration
