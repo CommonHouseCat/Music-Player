@@ -1,12 +1,12 @@
 # Project - Specialized Topics (Niên luận chuyên ngành) - CT501H
 
 ## Project Title
----
+
 Sleep Sound Application - Plays relaxing sounds to help users fall asleep.
 
 
 ## Features
----
+
 * **Sound Playback:**
     * Preloaded audio files.
     * Local audio files from the user's device.
@@ -16,7 +16,7 @@ Sleep Sound Application - Plays relaxing sounds to help users fall asleep.
 
 
 ## Technologies Used
----
+
 * Android Studio
 * Kotlin
 * Jetpack Compose
