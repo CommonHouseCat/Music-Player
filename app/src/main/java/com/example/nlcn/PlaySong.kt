@@ -32,6 +32,8 @@ import androidx.compose.material.icons.filled.AlarmOn
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RepeatOne
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -61,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.nlcn.ui.theme.NLCNTheme
@@ -328,6 +331,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Row of repeat, play/pause and set timer buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -364,7 +368,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
                     )
                 }
 
-                // Set time button
+                // Row of next and previous button
                 IconButton(
                     onClick = {
                         if (isTimerOn) {
@@ -379,6 +383,43 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
                         imageVector = if (isTimerOn) Icons.Filled.AlarmOn else Icons.Filled.AlarmOff,
                         contentDescription = "Timer",
                         tint = if (isTimerOn) Color.Green else MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Row of next and previous button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(
+                    space = when {
+                        LocalConfiguration.current.screenWidthDp > 600 -> 16.dp
+                        LocalConfiguration.current.screenWidthDp > 320 -> 88.dp
+                        else -> 4.dp
+                    },
+                    alignment = Alignment.CenterHorizontally
+                )
+            ) {
+                IconButton(
+                    onClick = { /*Implement later*/ },
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.SkipPrevious,
+                        contentDescription = "Previous",
+                        tint = if(isRepeatOn) Color.Green else MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
+
+                IconButton(
+                    onClick = { /*Implement later*/ },
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.SkipNext,
+                        contentDescription = "Next",
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp),
                     )
                 }
