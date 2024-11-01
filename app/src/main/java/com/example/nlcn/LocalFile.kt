@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,8 @@ fun LocalFile() {
     val database = remember { AppDatabase.getDatabase(context) }
     val playlistDao = remember { database.playlistDao() }
     val coroutineScope = rememberCoroutineScope()
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -62,7 +65,16 @@ fun LocalFile() {
     var playlistTitle by remember { mutableStateOf("") }
     var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
 
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
 
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
 
     // Load playlists when the composable is first created
     LaunchedEffect(Unit) {
@@ -74,7 +86,7 @@ fun LocalFile() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.secondary)
     ) {
         TopAppBar(
             title = {
@@ -82,24 +94,24 @@ fun LocalFile() {
                     Icon(
                         imageVector = Icons.Default.Folder,
                         contentDescription = "Local File",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        "Local File",
-                        color = Color.White,
+                        with(updatedContext) { getString(R.string.localFile) },
+                        color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.headlineMedium
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
             actions = {
                 IconButton(onClick = { showAddDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Playlist",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -135,17 +147,17 @@ fun LocalFile() {
                 showAddDialog = false
                 playlistTitle = ""
             },
-            title = { Text("Create new playlist", color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.createNewPlaylist) }, color = MaterialTheme.colorScheme.onPrimary) },
             text = {
                 Column {
                     TextField(
                         value = playlistTitle,
                         onValueChange = { playlistTitle = it },
-                        label = { Text("Playlist Title", color = Color.LightGray) },
+                        label = { Text(with(updatedContext) { getString(R.string.playlistTitle) }, color = MaterialTheme.colorScheme.onPrimary) },
                         singleLine = true,
                         colors = TextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent
                         )
@@ -164,7 +176,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text("Confirm", color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.confirm) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
             dismissButton = {
@@ -172,10 +184,10 @@ fun LocalFile() {
                     showAddDialog = false
                     playlistTitle = ""
                 }) {
-                    Text("Cancel", color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
-            containerColor = Color.DarkGray
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     }
 
@@ -185,8 +197,8 @@ fun LocalFile() {
                 showDeleteDialog = false
                 playlistToDelete = null
             },
-            title = { Text("Delete Playlist", color = Color.White) },
-            text = { Text("Do you want to delete ${playlistToDelete?.title}?", color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.deletePlaylist) }, color = Color.White) },
+            text = { Text(with(updatedContext) { getString(R.string.deletePlaylistConfirmation) }, color = Color.White) },
             confirmButton = {
                 TextButton(onClick = {
                     playlistToDelete?.let { playlist ->
@@ -198,7 +210,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text("Delete", color = Color.Red)
+                    Text(with(updatedContext) { getString(R.string.delete) }, color = Color.Red)
                 }
             },
             dismissButton = {
@@ -206,7 +218,7 @@ fun LocalFile() {
                     showDeleteDialog = false
                     playlistToDelete = null
                 }) {
-                    Text("Cancel", color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
                 }
             },
             containerColor = Color.DarkGray
@@ -217,12 +229,27 @@ fun LocalFile() {
 
 @Composable
 fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClick: () -> Unit) {
+    val context = LocalContext.current
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+
+    // Update configuration when language changes
+    val updatedContext = remember(currentLanguage.value) {
+        val locale = Locale(currentLanguage.value)
+        Locale.setDefault(locale)
+
+        val configuration = context.resources.configuration
+        configuration.setLocale(locale)
+
+        context.createConfigurationContext(configuration)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding( start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.DarkGray)
+            .background(MaterialTheme.colorScheme.onTertiary)
             .clickable (onClick = onItemClick),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -231,13 +258,15 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
             Text(
                 text = playlist.title,
                 style = MaterialTheme.typography.headlineSmall,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
 
             Text(
-                text = "Created on: ${SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(Date(playlist.createTime))}",
+                text = with(updatedContext) {
+                    getString(R.string.createdOn) + " " + SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(Date(playlist.createTime))
+                },
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -246,7 +275,7 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
-                tint = Color.Red,
+                tint = MaterialTheme.colorScheme.secondaryContainer,
                 modifier = Modifier.size(24.dp)
             )
         }

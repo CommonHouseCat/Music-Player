@@ -1,65 +1,72 @@
 package com.example.nlcn.ui.theme
 
 import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.example.nlcn.PreferenceDataStore
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Grey,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Color.Black,
+    secondary = Color.Black,
+    tertiary = Color.LightGray,
+    background = Color.Black,
+    surface = Color.Black,
+    onPrimary = Color.White,
+    onSecondary = Color.Gray,
+    onTertiary = Color.DarkGray,
+    onBackground = Color.White,
+    onSurface = Color.Black,
+    primaryContainer = Color.DarkGray,
+    secondaryContainer = Color(0xFFFF4500),
+    tertiaryContainer = Color(0xFF8031A7)
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = Color.White,
+    secondary = Color.White,
+    tertiary = Color.Black,
+    background = Color.Black,
+    surface = Color.White,
+    onPrimary = Color.Black,
+    onSecondary = Color.Black,
+    onTertiary = Color.LightGray,
+    onBackground = Color.Black,
+    onSurface = Color.White,
+    primaryContainer = Color.LightGray,
+    secondaryContainer = Color.Red,
+    tertiaryContainer = Color(0xFFFFA500)
 )
 
 @Composable
 fun NLCNTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dataStore: PreferenceDataStore = PreferenceDataStore(LocalContext.current),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val currentTheme = dataStore.getTheme.collectAsState(initial = "dark")
+    val context = LocalContext.current
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val colorScheme = when (currentTheme.value) {
+        "light" -> LightColorScheme
+        "dark" -> DarkColorScheme
+        else -> DarkColorScheme
     }
 
     val view = LocalView.current
-    if(!view.isInEditMode) {
+    if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = Grey.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            val window = (context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                currentTheme.value == "light"
         }
     }
 

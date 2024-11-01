@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NLCN</string>
+
+    <!--  Home Screen  -->
+    <string name="home">Trang chủ</string>
+    <string name="rainTitle">Mưa</string>
+    <string name="rainOnWindow">Mưa rơi trên cửa sổ</string>
+    <string name="thunderstorm">Giông bão</string>
+    <string name="rainInForest">Mưa trong rừng</string>
+    <string name="fireplaceTitle">Lò sưởi</string>
+    <string name="classicFireplace">Lò sưởi cổ điển</string>
+    <string name="fireplaceThunderstorm">Lò sưởi trong cơn bão</string>
+    <string name="natureTitle">Thiên nhiên</string>
+    <string name="campingAtNight">Cắm trại đêm khuya</string>
+    <string name="creek">Suối</string>
+    <string name="beachShore">Bờ biển</string>
+    <string name="forest">Rừng</string>
+    <string name="backgroundNoiseTitle">Tiếng ồn nền</string>
+    <string name="silentCarRide">Chuyến xe yên tĩnh</string>
+    <string name="peopleTalkingInTheOtherRoom">Tiếng trò chuyện phòng bên</string>
+
+    <!-- LocalFile -->
+    <string name="localFile">File cục bộ</string>
+    <string name="createNewPlaylist">Tạo danh sách phát mới</string>
+    <string name="playlistTitle">Tiêu đề danh sách phát</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="deletePlaylist">Xóa danh sách phát</string>
+    <string name="deletePlaylistConfirmation">Bạn có muốn xóa danh sách phát này không?</string>
+    <string name="createdOn">Được tạo vào:</string>
+
+    <!--  PlayPreLoadedSound Screen  -->
+    <string name="nowPlaying">Đang phát</string>
+    <string name="setTimer">Đặt hẹn giờ</string>
+    <string name="Duration">Thời lượng (phút):</string>
+    <string name="timer">Thời gian còn lại</string>
+
+    <!-- Playlist Activity Screen -->
+    <string name="addAudioFromDevice">Thêm âm thanh từ thiết bị</string>
+    <string name="displayName">Tên hiển thị</string>
+    <string name="selectedFile">Tệp đã chọn</string>
+    <string name="deleteSong">Xóa bài hát</string>
+    <string name="deleteSongConfirmation">Bạn có muốn xóa bài hát này không?</string>
+
+    <!-- Setting Screen  -->
+    <string name="settings">Cài đặt</string>
+    <string name="theme">Chế độ</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="about">Giới thiệu</string>
+    <string name="DarkMode">Tối</string>
+    <string name="LightMode">Sáng</string>
+
+    <!-- About Page -->
+    <string name="about_app">Về Ứng dụng Này</string>
+    <string name="about_description">Đây là một dự án cho một khóa học đại học, được thiết kế để giúp bạn dễ ngủ hơn với sự trợ giúp của nhiều âm thanh trắng êm dịu để làm át đi tất cả suy nghĩ nội tâm. Bạn cũng có thể cá nhân hóa trải nghiệm giấc ngủ bằng cách thêm các tệp âm thanh của riêng bạn từ thiết bị cục bộ.</string>
+    <string name="project_scope">Phạm Vi Dự Án</string>
+    <string name="project_scope_text">Đây là một dự án mã nguồn mở, phi thương mại được phát triển cho mục đích giáo dục. Hãy sử dụng nó theo ý muốn của bạn.</string>
+    <string name="technology">Công Nghệ</string>
+    <string name="technology_text">Được xây dựng với Jetpack Compose, Kotlin, cơ sở dữ liệu Room, Datastore và MediaPlayer.</string>
+    <string name="disclaimer">Tuyên Bố Miễn Trừ</string>
+    <string name="disclaimer_text">Ứng dụng này được cung cấp nguyên trạng, không có bảo hành. Nó không nhằm mục đích sử dụng y tế và không nên thay thế lời khuyên chuyên môn.</string>
+    <string name="credits">Ghi Công</string>
+    <string name="credits_text">Phát triển bởi: Nguyễn Quang Vinh\nMSSV: B2125727\nThuộc về: Đồ án - Chuyên đề (CT501H) - Đại học Cần Thơ</string>
+</resources>
