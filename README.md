@@ -1,31 +1,23 @@
-Niên luận chuyên ngành - CT501H
+# Project - Specialized Topics (Niên luận chuyên ngành) - CT501H
 
-Tên đề tài:
-
-- Ứng dụng sleep sound (Phát âm thanh thư giãn giúp người dùng dễ ngủ)
-
-
-
-Chức năng thực hiện:
-
-- Phát file âm thanh có sẵn (preloaded audio files) [x]
-
-- Phát file âm thanh từ máy người dùng (local files) 
-
-- Đặt thời gian phát âm thanh và tắt ứng dụng/tắt máy [x]
-
-- Chức năng phát nhạc nền [x]
-
-- Setting (đổi theme , ngôn ngữ, about page)
+## Project Title
+---
+Sleep Sound Application - Plays relaxing sounds to help users fall asleep.
 
 
+## Features
+---
+* **Sound Playback:**
+    * Preloaded audio files.
+    * Local audio files from the user's device.
+* **Timer:** Set a timer to stop playback and optionally turn off the app or device.
+* **Background Music:** Background music playback functionality.
+* **Settings:** Change theme, language, access the about page.
 
-Công nghệ sử dụng:
 
-- Android studio
-
-- Kotlin
-
-- Jetpack compose
-
-- Room database
+## Technologies Used
+---
+* Android Studio
+* Kotlin
+* Jetpack Compose
+* Room Database
