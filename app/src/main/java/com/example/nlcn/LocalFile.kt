@@ -147,17 +147,17 @@ fun LocalFile() {
                 showAddDialog = false
                 playlistTitle = ""
             },
-            title = { Text(with(updatedContext) { getString(R.string.createNewPlaylist) }, color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.createNewPlaylist) }, color = MaterialTheme.colorScheme.onPrimary) },
             text = {
                 Column {
                     TextField(
                         value = playlistTitle,
                         onValueChange = { playlistTitle = it },
-                        label = { Text(with(updatedContext) { getString(R.string.playlistTitle) }, color = Color.LightGray) },
+                        label = { Text(with(updatedContext) { getString(R.string.playlistTitle) }, color = MaterialTheme.colorScheme.onPrimary) },
                         singleLine = true,
                         colors = TextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
+                            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent
                         )
@@ -176,7 +176,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text(with(updatedContext) { getString(R.string.confirm) }, color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.confirm) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
             dismissButton = {
@@ -184,10 +184,10 @@ fun LocalFile() {
                     showAddDialog = false
                     playlistTitle = ""
                 }) {
-                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
-            containerColor = Color.DarkGray
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     }
 

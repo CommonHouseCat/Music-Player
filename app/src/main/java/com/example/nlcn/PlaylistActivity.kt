@@ -167,27 +167,27 @@ fun PlaylistScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.Black
+        color = MaterialTheme.colorScheme.secondary
     ) {
         Column {
             TopAppBar(
-                title = { Text(playlistTitle, color = Color.White) },
+                title = { Text(playlistTitle, color = MaterialTheme.colorScheme.onPrimary) },
                 navigationIcon = {
                     IconButton(onClick = { (context as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
                 actions = {
                     IconButton(onClick = { /* Handle shuffle */ }) {
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Shuffle",
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -195,7 +195,7 @@ fun PlaylistScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add Song",
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -230,17 +230,17 @@ fun PlaylistScreen(
                     displayName = ""
                     onFileNameChange("")
                 },
-                title = { Text("Add audio from Device", color = Color.White) },
+                title = { Text("Add audio from Device", color = MaterialTheme.colorScheme.onPrimary) },
                 text = {
                     Column {
                         TextField(
                             value = displayName,
                             onValueChange = { displayName = it },
-                            label = { Text("Display name", color = Color.LightGray) },
+                            label = { Text("Display name", color = MaterialTheme.colorScheme.onPrimary) },
                             singleLine = true,
                             colors = TextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
+                                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent
                             )
@@ -253,13 +253,13 @@ fun PlaylistScreen(
                             Icon(
                                 imageVector = Icons.Default.Folder,
                                 contentDescription = "Add from local device",
-                                tint = Color.LightGray,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(32.dp)
                             )
                         }
 
                         if (fileName.isNotEmpty()) {
-                            Text(text = "Selected file: \n$fileName", color = Color.White)
+                            Text(text = "Selected file: \n$fileName", color = MaterialTheme.colorScheme.onPrimary)
                         }
                     }
                 },
@@ -291,7 +291,7 @@ fun PlaylistScreen(
                             }
                         }
                     ) {
-                        Text("Confirm", color = Color.White)
+                        Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 dismissButton = {
@@ -302,10 +302,10 @@ fun PlaylistScreen(
                             onFileNameChange("")
                         }
                     ) {
-                        Text("Cancel", color = Color.White)
+                        Text("Cancel", color = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
-                containerColor = Color.DarkGray
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         }
 
@@ -315,9 +315,9 @@ fun PlaylistScreen(
                     showDeleteDialog = false
                     songToDelete = null
                 },
-                title = { Text(with(updatedContext) { getString(R.string.deleteSong) }, color = Color.White) },
+                title = { Text(with(updatedContext) { getString(R.string.deleteSong) }, color = MaterialTheme.colorScheme.onPrimary) },
                 text = {
-                    Text((with(updatedContext) { getString(R.string.deleteSongConfirmation) + "\n ${songToDelete?.displayName}"}) , color = Color.White) },
+                    Text((with(updatedContext) { getString(R.string.deleteSongConfirmation) + "\n ${songToDelete?.displayName}"}) , color = MaterialTheme.colorScheme.onPrimary) },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -331,7 +331,7 @@ fun PlaylistScreen(
                             }
                         }
                     ) {
-                        Text(with(updatedContext) {getString(R.string.delete)}, color = Color.Red)
+                        Text(with(updatedContext) {getString(R.string.delete)}, color = MaterialTheme.colorScheme.secondaryContainer)
                     }
                 },
                 dismissButton = {
@@ -341,10 +341,10 @@ fun PlaylistScreen(
                             songToDelete = null
                         }
                     ) {
-                        Text(with(updatedContext) {getString(R.string.cancel)}, color = Color.White)
+                        Text(with(updatedContext) {getString(R.string.cancel)}, color = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
-                containerColor = Color.DarkGray
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         }
     }
@@ -357,7 +357,7 @@ fun SongItem(song: SongEntity, onDeleteClick: () -> Unit, onItemClick: () -> Uni
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.DarkGray)
+            .background(MaterialTheme.colorScheme.onTertiary)
             .clickable(onClick = onItemClick),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -365,7 +365,7 @@ fun SongItem(song: SongEntity, onDeleteClick: () -> Unit, onItemClick: () -> Uni
         Text(
             text = song.displayName,
             style = MaterialTheme.typography.headlineSmall,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
@@ -375,7 +375,7 @@ fun SongItem(song: SongEntity, onDeleteClick: () -> Unit, onItemClick: () -> Uni
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
-                tint = Color.Red,
+                tint = MaterialTheme.colorScheme.secondaryContainer,
                 modifier = Modifier.size(24.dp)
             )
         }

@@ -206,21 +206,21 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
 
         AlertDialog(
             onDismissRequest = { onDismissRequest() },
-            title = { Text(with(updatedContext) { getString(R.string.setTimer) }, color = Color.White)  },
+            title = { Text(with(updatedContext) { getString(R.string.setTimer) }, color = MaterialTheme.colorScheme.onPrimary)  },
             text = {
                 Column {
                     // Display the selected time in minutes directly
                     Text(
                         text = with(updatedContext){
                             getString(R.string.Duration) + " ${selectedTime.toInt()}"},
-                        color = Color.White)
+                        color = MaterialTheme.colorScheme.onPrimary)
                     Slider(
                         value = selectedTime,
                         onValueChange = { selectedTime = it },
                         valueRange = 0f..480f, // Max 480 minutes (8 hours)
                         steps = 479 ,
                         colors = SliderDefaults.colors(
-                            thumbColor = Color.White,
+                            thumbColor = MaterialTheme.colorScheme.onPrimary,
                             activeTrackColor = Color.Blue,
                             inactiveTrackColor = Color.LightGray
                         )
@@ -229,14 +229,15 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             },
             confirmButton = {
                 TextButton(onClick = { onTimeSelected(selectedTime.toInt()) }) {
-                    Text(with(updatedContext) { getString(R.string.confirm) },  color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.confirm) },  color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     }
 
@@ -248,11 +249,11 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 title = { },
                 navigationIcon = {
                     IconButton(onClick = { (context as? ComponentActivity)?.onBackPressedDispatcher?.onBackPressed() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",  tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",  tint = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         }
@@ -261,19 +262,17 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.Black),
+                .background(MaterialTheme.colorScheme.secondary),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-
 
             Spacer(modifier = Modifier.height(50.dp))
 
             Text( // Display the "Now Playing" text
                 with(updatedContext) { getString(R.string.nowPlaying) },
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(top = 4.dp)
             )
 
@@ -300,13 +299,13 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             Text( // Display the track name
                 text = displayName,
                 style = MaterialTheme.typography.headlineSmall,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
 
             if (isTimerOn) {
                 Text(
-                    text = with(updatedContext) {getString(R.string.timer) + " : ${formatTimeForCounter(remainingTime)}"},
-                    color = Color.White,
+                    text = with(updatedContext) {getString(R.string.timer) + ": ${formatTimeForCounter(remainingTime)}"},
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -324,7 +323,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 },
                 modifier = Modifier.padding(horizontal = 36.dp),
                 colors = SliderDefaults.colors(
-                    thumbColor = Color.White,
+                    thumbColor = MaterialTheme.colorScheme.onPrimary,
                     activeTrackColor = Color.Blue,
                     inactiveTrackColor = Color.LightGray
                 )
@@ -337,12 +336,12 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             ) {
                 Text(
                     text = formatTime(currentPosition.toInt()),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(start = 30.dp)
                 )
                 Text(
                     text = formatTime(duration.toInt()),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(end = 30.dp)
                 )
             }
@@ -360,7 +359,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                     Icon(
                         imageVector = if(isRepeatOn) Icons.Filled.RepeatOne else Icons.Outlined.Repeat,
                         contentDescription = "Repeat",
-                        tint = if(isRepeatOn) Color.Green else Color.White,
+                        tint = if(isRepeatOn) Color.Green else MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp),
                     )
                 }
@@ -380,7 +379,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                     Icon(
                         imageVector = if(mediaPlayer.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                         contentDescription = if (mediaPlayer.isPlaying) "Pause" else "Play",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp),
                     )
                 }
@@ -399,7 +398,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                     Icon(
                         imageVector = if (isTimerOn) Icons.Filled.AlarmOn else Icons.Filled.AlarmOff,
                         contentDescription = "Timer",
-                        tint = if (isTimerOn) Color.Green else Color.White,
+                        tint = if (isTimerOn) Color.Green else MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(32.dp),
                     )
                 }
