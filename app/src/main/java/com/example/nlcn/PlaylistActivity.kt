@@ -165,6 +165,23 @@ fun PlaylistScreen(
         songs = songDao.getSongsForPlaylist(playlistId)
     }
 
+    // Function to handle shuffle button click
+    fun onShuffleClick() {
+        if (songs.isNotEmpty()) {
+            val randomIndex = songs.indices.random()
+            val randomSong = songs[randomIndex]
+
+            val intent = Intent(context, PlaySong::class.java).apply {
+                putExtra("playlistId", playlistId)
+                putExtra("songIndex", randomIndex)
+                putExtra("soundFileName", randomSong.contentUri)
+                putExtra("displayName", randomSong.displayName)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(intent)
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.secondary
@@ -183,11 +200,14 @@ fun PlaylistScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
                 actions = {
-                    IconButton(onClick = { /* Handle shuffle */ }) {
+                    IconButton(
+                        onClick = { onShuffleClick() },
+                        enabled = songs.isNotEmpty()
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Shuffle",
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint =  if (songs.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                             modifier = Modifier.size(32.dp)
                         )
                     }
