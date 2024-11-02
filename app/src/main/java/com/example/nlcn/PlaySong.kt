@@ -75,6 +75,10 @@ import java.util.Locale
 class PlaySong:ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val playlistId = intent.getIntExtra("playlistId", -1)
+        val currentSongIndex = intent.getIntExtra("songIndex", -1)
+
         val soundFileUri = intent.getStringExtra("soundFileName") ?: return
         val displayName = intent.getStringExtra("displayName") ?: "Unknown Track"
 
@@ -89,15 +93,108 @@ class PlaySong:ComponentActivity() {
 
         setContent {
             NLCNTheme {
-                PlaySongScreen(context = this,  soundFileUri = soundFileUri, displayName = displayName)
+//                PlaySongScreen(context = this,  soundFileUri = soundFileUri, displayName = displayName)
+                PlaylistSongScreen(
+                    context = this,
+                    playlistId = playlistId,
+                    initialSongIndex = currentSongIndex,
+                    initialSoundFileUri = soundFileUri,
+                    initialDisplayName = displayName
+                )
             }
         }
     }
 }
 
+@Composable
+fun PlaylistSongScreen(
+    context: Context,
+    playlistId: Int,
+    initialSongIndex: Int,
+    initialSoundFileUri: String,
+    initialDisplayName: String
+) {
+    val database = remember { AppDatabase.getDatabase(context) }
+    val songDao = remember { database.songDao() }
+
+    // State to track playlist songs and current index
+    var playlistSongs by remember { mutableStateOf<List<SongEntity>>(emptyList()) }
+    var currentSongIndex by remember { mutableStateOf(initialSongIndex) }
+
+    // Fetch playlist songs
+    LaunchedEffect(playlistId) {
+        playlistSongs = songDao.getSongsForPlaylist(playlistId)
+    }
+
+    // Function to play next song
+    val playNextSong: () -> Unit = {
+        if (playlistSongs.isNotEmpty()) {
+            val nextIndex = (currentSongIndex + 1) % playlistSongs.size
+            val nextSong = playlistSongs[nextIndex]
+
+            // Update current index
+            currentSongIndex = nextIndex
+
+            // Start a new PlaySong activity with the next song
+            val intent = Intent(context, PlaySong::class.java).apply {
+                putExtra("playlistId", playlistId)
+                putExtra("songIndex", nextIndex)
+                putExtra("soundFileName", nextSong.contentUri)
+                putExtra("displayName", nextSong.displayName)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(intent)
+
+            // Finish the current activity
+            (context as? ComponentActivity)?.finish()
+        }
+    }
+
+    val playPreviousSong: () -> Unit = {
+        if (playlistSongs.isNotEmpty()) {
+            val previousIndex = if (currentSongIndex > 0) currentSongIndex - 1 else playlistSongs.size - 1
+            val previousSong = playlistSongs[previousIndex]
+
+            // Update current index
+            currentSongIndex = previousIndex
+
+            // Start a new PlaySong activity with the previous song
+            val intent = Intent(context, PlaySong::class.java).apply {
+                putExtra("playlistId", playlistId)
+                putExtra("songIndex", previousIndex)
+                putExtra("soundFileName", previousSong.contentUri)
+                putExtra("displayName", previousSong.displayName)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(intent)
+
+            // Finish the current activity
+            (context as? ComponentActivity)?.finish()
+        }
+    }
+
+    // Modify PlaySongScreen to include playlist navigation
+    PlaySongScreen(
+        context = context,
+        soundFileUri = initialSoundFileUri,
+        displayName = initialDisplayName,
+        onSongCompleted = { playNextSong() },
+        onNextClick = { playNextSong() },
+        onPreviousClick = { playPreviousSong() },
+        enableControls = playlistSongs.size > 1
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) {
+fun PlaySongScreen(context: Context,
+                   soundFileUri: String,
+                   displayName: String,
+                   onSongCompleted: () -> Unit,
+                   onNextClick: () -> Unit,
+                   onPreviousClick: () -> Unit,
+                   enableControls: Boolean)
+{
     val mediaPlayer = remember { MediaPlayer() }
     val coroutineScope = rememberCoroutineScope()
     val dataStore = remember { PreferenceDataStore(context) }
@@ -152,6 +249,7 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
                 mediaPlayer.start() // Restart the track if repeat is on
             } else {
                 isPlaying = false // Mark as not playing when finished
+                onSongCompleted()
             }
         }
 
@@ -403,23 +501,25 @@ fun PlaySongScreen(context: Context, soundFileUri: String, displayName: String) 
                 )
             ) {
                 IconButton(
-                    onClick = { /*Implement later*/ },
+                    onClick = onPreviousClick,
+                    enabled = enableControls
                 ) {
                     Icon(
                         imageVector = Icons.Filled.SkipPrevious,
                         contentDescription = "Previous",
-                        tint = if(isRepeatOn) Color.Green else MaterialTheme.colorScheme.onPrimary,
+                        tint = if (enableControls) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                         modifier = Modifier.size(32.dp),
                     )
                 }
 
                 IconButton(
-                    onClick = { /*Implement later*/ },
+                    onClick = onNextClick,
+                    enabled = enableControls
                 ) {
                     Icon(
                         imageVector = Icons.Filled.SkipNext,
                         contentDescription = "Next",
-                        tint = MaterialTheme.colorScheme.onPrimary,
+                        tint = if (enableControls) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                         modifier = Modifier.size(32.dp),
                     )
                 }

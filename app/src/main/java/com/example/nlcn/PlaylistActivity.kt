@@ -212,6 +212,8 @@ fun PlaylistScreen(
                         },
                         onItemClick = {
                             val intent = Intent(context, PlaySong::class.java).apply {
+                                putExtra("playlistId", playlistId)
+                                putExtra("songIndex", songs.indexOf(song))
                                 putExtra("soundFileName", song.contentUri)
                                 putExtra("displayName", song.displayName)
                                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
