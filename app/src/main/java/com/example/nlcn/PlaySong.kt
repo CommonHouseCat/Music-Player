@@ -93,7 +93,6 @@ class PlaySong:ComponentActivity() {
 
         setContent {
             NLCNTheme {
-//                PlaySongScreen(context = this,  soundFileUri = soundFileUri, displayName = displayName)
                 PlaylistSongScreen(
                     context = this,
                     playlistId = playlistId,
@@ -188,14 +187,15 @@ fun PlaylistSongScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaySongScreen(context: Context,
-                   soundFileUri: String,
-                   displayName: String,
-                   onSongCompleted: () -> Unit,
-                   onNextClick: () -> Unit,
-                   onPreviousClick: () -> Unit,
-                   enableControls: Boolean)
-{
+fun PlaySongScreen(
+    context: Context,
+    soundFileUri: String,
+    displayName: String,
+    onSongCompleted: () -> Unit,
+    onNextClick: () -> Unit,
+    onPreviousClick: () -> Unit,
+    enableControls: Boolean
+) {
     val mediaPlayer = remember { MediaPlayer() }
     val coroutineScope = rememberCoroutineScope()
     val dataStore = remember { PreferenceDataStore(context) }

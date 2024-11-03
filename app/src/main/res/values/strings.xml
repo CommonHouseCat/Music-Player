@@ -47,6 +47,7 @@
     <string name="deleteSong">Delete Song</string>
     <string name="deleteSongConfirmation">Do you want to delete this song?</string>
     <string name="editSongTitle">Edit Title</string>
+    <string name="lastSongMessage">This is the last song in the playlist</string>
 
 
     <!-- Setting Screen  -->

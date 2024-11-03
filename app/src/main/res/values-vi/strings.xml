@@ -48,6 +48,7 @@
     <string name="deleteSong">Xóa bài hát</string>
     <string name="deleteSongConfirmation">Bạn có muốn xóa bài hát này không?</string>
     <string name="editSongTitle">Chỉnh sửa tiêu đề</string>
+    <string name="lastSongMessage">Đây là bài hát cuối cùngtrong danh sách phát</string>
 
 
     <!-- Setting Screen  -->
