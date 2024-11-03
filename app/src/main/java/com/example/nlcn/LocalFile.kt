@@ -134,9 +134,11 @@ fun LocalFile() {
                         }
                     },
                     onEditClick = {
-                        playlistToEdit = playlist
-                        editPlaylistTitle = playlist.title
-                        showEditDialog = true
+                        coroutineScope.launch {
+                            playlistToEdit = playlist
+                            editPlaylistTitle = playlist.title
+                            showEditDialog = true
+                        }
                     },
                     onItemClick = {
                         val intent = Intent(context, PlaylistActivity::class.java).apply {
@@ -240,7 +242,7 @@ fun LocalFile() {
     if (showEditDialog) {
         AlertDialog(
             onDismissRequest = {
-                 showEditDialog = false
+                showEditDialog = false
                 playlistToEdit = null
                 editPlaylistTitle = ""
             },
@@ -280,11 +282,12 @@ fun LocalFile() {
             },
 
             dismissButton = {
-                TextButton(onClick = {
-                    showEditDialog = false
-                    playlistToEdit = null
-                    editPlaylistTitle = ""
-                }) {
+                TextButton(
+                    onClick = {
+                        showEditDialog = false
+                        playlistToEdit = null
+                        editPlaylistTitle = ""
+                    }) {
                     Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },

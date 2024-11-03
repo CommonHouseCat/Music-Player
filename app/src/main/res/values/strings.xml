@@ -19,6 +19,7 @@
     <string name="silentCarRide">A Silent Car Ride</string>
     <string name="peopleTalkingInTheOtherRoom">People talking in the other room</string>
 
+
     <!-- LocalFile -->
     <string name="localFile">Local File</string>
     <string name="createNewPlaylist">Create a new playlist</string>
@@ -31,17 +32,22 @@
     <string name="createdOn">Created On:</string>
     <string name="editPlaylistTitle">Edit Title</string>
 
+
     <!--  PlayPreLoadedSound Screen  -->
     <string name="nowPlaying">Now Playing</string>
     <string name="setTimer">Set Timer</string>
     <string name="Duration">Duration (minutes): </string>
     <string name="timer">Timer</string>
+
+
     <!--  Playlist Activity Screen  -->
     <string name="addAudioFromDevice">Add audio from Device</string>
     <string name="displayName">Display name</string>
     <string name="selectedFile">Selected file</string>
     <string name="deleteSong">Delete Song</string>
     <string name="deleteSongConfirmation">Do you want to delete this song?</string>
+    <string name="editSongTitle">Edit Title</string>
+
 
     <!-- Setting Screen  -->
     <string name="settings">Settings</string>

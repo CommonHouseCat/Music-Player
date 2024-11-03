@@ -20,6 +20,7 @@
     <string name="silentCarRide">Chuyến xe yên tĩnh</string>
     <string name="peopleTalkingInTheOtherRoom">Tiếng trò chuyện phòng bên</string>
 
+
     <!-- LocalFile -->
     <string name="localFile">File cục bộ</string>
     <string name="createNewPlaylist">Tạo danh sách phát mới</string>
@@ -32,11 +33,13 @@
     <string name="createdOn">Được tạo vào:</string>
     <string name="editPlaylistTitle">Chỉnh sửa tiêu đề</string>
 
+
     <!--  PlayPreLoadedSound Screen  -->
     <string name="nowPlaying">Đang phát</string>
     <string name="setTimer">Đặt hẹn giờ</string>
     <string name="Duration">Thời lượng (phút):</string>
     <string name="timer">Thời gian còn lại</string>
+
 
     <!-- Playlist Activity Screen -->
     <string name="addAudioFromDevice">Thêm âm thanh từ thiết bị</string>
@@ -44,6 +47,8 @@
     <string name="selectedFile">Tệp đã chọn</string>
     <string name="deleteSong">Xóa bài hát</string>
     <string name="deleteSongConfirmation">Bạn có muốn xóa bài hát này không?</string>
+    <string name="editSongTitle">Chỉnh sửa tiêu đề</string>
+
 
     <!-- Setting Screen  -->
     <string name="settings">Cài đặt</string>
@@ -52,6 +57,7 @@
     <string name="about">Giới thiệu</string>
     <string name="DarkMode">Tối</string>
     <string name="LightMode">Sáng</string>
+
 
     <!-- About Page -->
     <string name="about_app">Về Ứng dụng Này</string>
