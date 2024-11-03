@@ -106,6 +106,7 @@ class PlaySong:ComponentActivity() {
     }
 }
 
+@SuppressLint("AutoboxingStateCreation")
 @Composable
 fun PlaylistSongScreen(
     context: Context,
@@ -305,9 +306,9 @@ fun PlaySongScreen(context: Context,
                         valueRange = 0f..480f,
                         steps = 479,
                         colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.onPrimary,
-                            activeTrackColor = Color.Blue,
-                            inactiveTrackColor = Color.LightGray
+                            thumbColor = MaterialTheme.colorScheme.secondaryContainer,
+                            activeTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                            inactiveTrackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                         )
                     )
                 }
@@ -404,9 +405,9 @@ fun PlaySongScreen(context: Context,
                 },
                 modifier = Modifier.padding(horizontal = 36.dp),
                 colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.onPrimary,
-                    activeTrackColor = Color.Blue,
-                    inactiveTrackColor = Color.LightGray
+                    thumbColor = MaterialTheme.colorScheme.secondaryContainer,
+                    activeTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                    inactiveTrackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                 )
             )
 
