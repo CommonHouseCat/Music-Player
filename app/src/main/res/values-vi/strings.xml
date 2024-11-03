@@ -30,6 +30,7 @@
     <string name="deletePlaylist">Xóa danh sách phát</string>
     <string name="deletePlaylistConfirmation">Bạn có muốn xóa danh sách phát này không?</string>
     <string name="createdOn">Được tạo vào:</string>
+    <string name="editPlaylistTitle">Chỉnh sửa tiêu đề</string>
 
     <!--  PlayPreLoadedSound Screen  -->
     <string name="nowPlaying">Đang phát</string>
