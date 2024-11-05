@@ -217,12 +217,12 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                     Slider(
                         value = selectedTime,
                         onValueChange = { selectedTime = it },
-                        valueRange = 0f..480f, // Max 480 minutes (8 hours)
-                        steps = 479 ,
+                        valueRange = 0f..480f,
+                        steps = 479,
                         colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.onPrimary,
-                            activeTrackColor = Color.Blue,
-                            inactiveTrackColor = Color.LightGray
+                            thumbColor = MaterialTheme.colorScheme.secondaryContainer,
+                            activeTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                            inactiveTrackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                         )
                     )
                 }
@@ -323,9 +323,9 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 },
                 modifier = Modifier.padding(horizontal = 36.dp),
                 colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.onPrimary,
-                    activeTrackColor = Color.Blue,
-                    inactiveTrackColor = Color.LightGray
+                    thumbColor = MaterialTheme.colorScheme.secondaryContainer,
+                    activeTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                    inactiveTrackColor = Color.DarkGray.copy(alpha = 0.5f)
                 )
             )
 

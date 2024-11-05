@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,10 +61,14 @@ fun LocalFile() {
     val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
     var showAddDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var playlistToDelete by remember { mutableStateOf<PlaylistEntity?>(null) }
     var playlistTitle by remember { mutableStateOf("") }
     var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var playlistToDelete by remember { mutableStateOf<PlaylistEntity?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var playlistToEdit by remember { mutableStateOf<PlaylistEntity?>(null) }
+    var editPlaylistTitle by remember { mutableStateOf("") }
+
 
     // Update configuration when language changes
     val updatedContext = remember(currentLanguage.value) {
@@ -126,6 +131,13 @@ fun LocalFile() {
                         coroutineScope.launch {
                             playlistToDelete = playlist
                             showDeleteDialog = true
+                        }
+                    },
+                    onEditClick = {
+                        coroutineScope.launch {
+                            playlistToEdit = playlist
+                            editPlaylistTitle = playlist.title
+                            showEditDialog = true
                         }
                     },
                     onItemClick = {
@@ -191,6 +203,7 @@ fun LocalFile() {
         )
     }
 
+    // Dialog box for deleting a playlist
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -224,11 +237,74 @@ fun LocalFile() {
             containerColor = Color.DarkGray
         )
     }
+
+    // Dialog box for editing a playlist title
+    if (showEditDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showEditDialog = false
+                playlistToEdit = null
+                editPlaylistTitle = ""
+            },
+            title = { Text(with(updatedContext) { getString(R.string.editPlaylistTitle) }, color = MaterialTheme.colorScheme.onPrimary) },
+            text = {
+                Column {
+                    TextField(
+                        value = editPlaylistTitle,
+                        onValueChange = { editPlaylistTitle = it },
+                        label = { Text(with(updatedContext) { getString(R.string.playlistTitle) }, color = MaterialTheme.colorScheme.onPrimary) },
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if(editPlaylistTitle.isNotBlank()) {
+                        coroutineScope.launch {
+                            playlistToEdit?.let { playlist ->
+                                playlistDao.updatePlaylistTitle(playlist.id, editPlaylistTitle)
+                                playlists = playlistDao.getAllPlaylists()
+                                showEditDialog = false
+                                playlistToEdit = null
+                                editPlaylistTitle = ""
+                            }
+                        }
+                    }
+                }) {
+                    Text(with(updatedContext) { getString(R.string.confirm) }, color = MaterialTheme.colorScheme.onPrimary)
+                }
+            },
+
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showEditDialog = false
+                        playlistToEdit = null
+                        editPlaylistTitle = ""
+                    }) {
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
+                }
+            },
+
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    }
 }
 
 
 @Composable
-fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClick: () -> Unit) {
+fun PlaylistItem(
+    playlist: PlaylistEntity,
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onItemClick: () -> Unit
+) {
     val context = LocalContext.current
     val dataStore = remember { PreferenceDataStore(context) }
     val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
@@ -247,14 +323,16 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding( start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.onTertiary)
-            .clickable (onClick = onItemClick),
+            .clickable(onClick = onItemClick),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column (modifier = Modifier.weight(1f).padding(start = 16.dp, top = 8.dp, bottom = 8.dp)){
+        Column (modifier = Modifier
+            .weight(1f)
+            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)){
             Text(
                 text = playlist.title,
                 style = MaterialTheme.typography.headlineSmall,
@@ -268,6 +346,15 @@ fun PlaylistItem(playlist: PlaylistEntity, onDeleteClick: () -> Unit, onItemClic
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
+        IconButton(onClick = onEditClick) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit Title",
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(24.dp)
             )
         }
 

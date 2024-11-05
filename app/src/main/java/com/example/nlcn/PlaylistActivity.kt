@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.AlertDialog
@@ -145,10 +146,13 @@ fun PlaylistScreen(
     val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
     var showAddDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var songToDelete by remember { mutableStateOf<SongEntity?>(null) }
     var displayName by remember { mutableStateOf("") }
     var songs by remember { mutableStateOf<List<SongEntity>>(emptyList()) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var songToDelete by remember { mutableStateOf<SongEntity?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var songToEdit by remember { mutableStateOf<SongEntity?>(null) }
+    var editDisplayName by remember { mutableStateOf("") }
 
     // Update configuration when language changes
     val updatedContext = remember(currentLanguage.value) {
@@ -163,6 +167,23 @@ fun PlaylistScreen(
 
     LaunchedEffect(playlistId) {
         songs = songDao.getSongsForPlaylist(playlistId)
+    }
+
+    // Function to handle shuffle button click
+    fun onShuffleClick() {
+        if (songs.isNotEmpty()) {
+            val randomIndex = songs.indices.random()
+            val randomSong = songs[randomIndex]
+
+            val intent = Intent(context, PlaySong::class.java).apply {
+                putExtra("playlistId", playlistId)
+                putExtra("songIndex", randomIndex)
+                putExtra("soundFileName", randomSong.contentUri)
+                putExtra("displayName", randomSong.displayName)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(intent)
+        }
     }
 
     Surface(
@@ -183,11 +204,14 @@ fun PlaylistScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
                 actions = {
-                    IconButton(onClick = { /* Handle shuffle */ }) {
+                    IconButton(
+                        onClick = { onShuffleClick() },
+                        enabled = songs.isNotEmpty()
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Shuffle,
                             contentDescription = "Shuffle",
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint =  if (songs.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -207,11 +231,22 @@ fun PlaylistScreen(
                     SongItem(
                         song = song,
                         onDeleteClick = {
-                            songToDelete = song
-                            showDeleteDialog = true
+                            coroutineScope.launch {
+                                songToDelete = song
+                                showDeleteDialog = true
+                            }
+                        },
+                        onEditClick = {
+                            coroutineScope.launch {
+                                songToEdit = song
+                                editDisplayName = song.displayName
+                                showEditDialog = true
+                            }
                         },
                         onItemClick = {
                             val intent = Intent(context, PlaySong::class.java).apply {
+                                putExtra("playlistId", playlistId)
+                                putExtra("songIndex", songs.indexOf(song))
                                 putExtra("soundFileName", song.contentUri)
                                 putExtra("displayName", song.displayName)
                                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -347,11 +382,70 @@ fun PlaylistScreen(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         }
+
+        if (showEditDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showEditDialog = false
+                    songToEdit = null
+                    editDisplayName = ""
+                },
+                title = { Text(with(updatedContext) { getString(R.string.editSongTitle) }, color = MaterialTheme.colorScheme.onPrimary) },
+                text= {
+                    Column {
+                        TextField(
+                            value = editDisplayName,
+                            onValueChange = { editDisplayName = it },
+                            label = { Text(with(updatedContext) { getString(R.string.displayName) }, color = MaterialTheme.colorScheme.onPrimary) },
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent
+                            )
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        if(editDisplayName.isNotBlank()) {
+                            coroutineScope.launch {
+                                songToEdit?.let { song ->
+                                    songDao.updateSongTitle(song.id, editDisplayName)
+                                    songs = songDao.getSongsForPlaylist(playlistId)
+                                    showEditDialog = false
+                                    songToEdit = null
+                                    editDisplayName = ""
+                                }
+                            }
+                        }
+                    }) {
+                        Text(with(updatedContext) { getString(R.string.confirm) }, color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                },
+                dismissButton = {
+                    TextButton (
+                        onClick = {
+                            showEditDialog = false
+                            songToEdit = null
+                            editDisplayName = ""
+                        }) {
+                        Text(with(updatedContext) {getString(R.string.cancel)}, color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer)
+        }
     }
 }
 
 @Composable
-fun SongItem(song: SongEntity, onDeleteClick: () -> Unit, onItemClick: () -> Unit) {
+fun SongItem(
+    song: SongEntity,
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onItemClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -370,6 +464,15 @@ fun SongItem(song: SongEntity, onDeleteClick: () -> Unit, onItemClick: () -> Uni
                 .weight(1f)
                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
         )
+
+        IconButton(onClick = onEditClick) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit",
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(24.dp)
+            )
+        }
 
         IconButton(onClick = onDeleteClick) {
             Icon(

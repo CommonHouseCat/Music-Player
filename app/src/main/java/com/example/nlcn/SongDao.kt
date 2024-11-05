@@ -24,4 +24,7 @@ interface SongDao {
     @Query("DELETE FROM songs WHERE playlistId = :playlistId")
     suspend fun deleteAllSongsFromPlaylist(playlistId: Int)
 
+    // Edit song title by Id
+    @Query("UPDATE songs SET displayName = :newDisplayName WHERE id = :songId")
+    suspend fun updateSongTitle(songId: Int, newDisplayName: String)
 }

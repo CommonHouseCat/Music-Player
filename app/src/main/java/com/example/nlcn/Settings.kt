@@ -101,9 +101,7 @@ fun Settings(viewModel: SettingsViewModel = viewModel()){
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
 
             // Spacer between the top bar and the row
