@@ -243,8 +243,8 @@ fun LocalFile() {
                 showDeleteDialog = false
                 playlistToDelete = null
             },
-            title = { Text(with(updatedContext) { getString(R.string.deletePlaylist) }, color = Color.White) },
-            text = { Text(with(updatedContext) { getString(R.string.deletePlaylistConfirmation) }, color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.deletePlaylist) }, color = MaterialTheme.colorScheme.onPrimary) },
+            text = { Text(with(updatedContext) { getString(R.string.deletePlaylistConfirmation) }, color = MaterialTheme.colorScheme.onPrimary) },
             confirmButton = {
                 TextButton(onClick = {
                     playlistToDelete?.let { playlist ->
@@ -256,7 +256,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text(with(updatedContext) { getString(R.string.delete) }, color = Color.Red)
+                    Text(with(updatedContext) { getString(R.string.delete) }, color = MaterialTheme.colorScheme.secondaryContainer)
                 }
             },
             dismissButton = {
@@ -264,10 +264,10 @@ fun LocalFile() {
                     showDeleteDialog = false
                     playlistToDelete = null
                 }) {
-                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
-            containerColor = Color.DarkGray
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     }
 

@@ -79,7 +79,6 @@ class PlaySong:ComponentActivity() {
 
         val playlistId = intent.getIntExtra("playlistId", -1)
         val currentSongIndex = intent.getIntExtra("songIndex", -1)
-
         val soundFileUri = intent.getStringExtra("soundFileName") ?: return
         val displayName = intent.getStringExtra("displayName") ?: "Unknown Track"
 
