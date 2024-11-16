@@ -1,6 +1,10 @@
+@file:Suppress("LiftReturnOrAssignment", "RedundantIf", "KotlinConstantConditions")
+
 package com.example.nlcn
 
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,18 +53,14 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.Manifest
+import android.util.Log
+import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalFile() {
-    val context = LocalContext.current
-    val database = remember { AppDatabase.getDatabase(context) }
-    val playlistDao = remember { database.playlistDao() }
-    val coroutineScope = rememberCoroutineScope()
-    val dataStore = remember { PreferenceDataStore(context) }
-    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
-    var showAddDialog by remember { mutableStateOf(false) }
     var playlistTitle by remember { mutableStateOf("") }
     var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -68,6 +68,28 @@ fun LocalFile() {
     var showEditDialog by remember { mutableStateOf(false) }
     var playlistToEdit by remember { mutableStateOf<PlaylistEntity?>(null) }
     var editPlaylistTitle by remember { mutableStateOf("") }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var permissionGranted by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val database = remember { AppDatabase.getDatabase(context) }
+    val playlistDao = remember { database.playlistDao() }
+    val coroutineScope = rememberCoroutineScope()
+    val dataStore = remember { PreferenceDataStore(context) }
+    val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if(isGranted) {
+            Log.d("LocalFile", "Permission granted")
+            permissionGranted = isGranted
+        }else {
+            Log.d("LocalFile", "Permission denied")
+            Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please grant permission\nin app settings", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
     // Update configuration when language changes
@@ -83,7 +105,9 @@ fun LocalFile() {
 
     // Load playlists when the composable is first created
     LaunchedEffect(Unit) {
+        launcher.launch(Manifest.permission.READ_MEDIA_AUDIO)
         coroutineScope.launch {
+            playlists = playlistDao.getAllPlaylists()
             playlists = playlistDao.getAllPlaylists()
         }
     }
@@ -111,8 +135,17 @@ fun LocalFile() {
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+
             actions = {
-                IconButton(onClick = { showAddDialog = true }) {
+                IconButton(
+                    onClick = {
+                        if (permissionGranted) {
+                            showAddDialog = true
+                        } else {
+                            launcher.launch(Manifest.permission.READ_MEDIA_AUDIO)
+                        }
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Playlist",
@@ -210,8 +243,8 @@ fun LocalFile() {
                 showDeleteDialog = false
                 playlistToDelete = null
             },
-            title = { Text(with(updatedContext) { getString(R.string.deletePlaylist) }, color = Color.White) },
-            text = { Text(with(updatedContext) { getString(R.string.deletePlaylistConfirmation) }, color = Color.White) },
+            title = { Text(with(updatedContext) { getString(R.string.deletePlaylist) }, color = MaterialTheme.colorScheme.onPrimary) },
+            text = { Text(with(updatedContext) { getString(R.string.deletePlaylistConfirmation) }, color = MaterialTheme.colorScheme.onPrimary) },
             confirmButton = {
                 TextButton(onClick = {
                     playlistToDelete?.let { playlist ->
@@ -223,7 +256,7 @@ fun LocalFile() {
                         }
                     }
                 }) {
-                    Text(with(updatedContext) { getString(R.string.delete) }, color = Color.Red)
+                    Text(with(updatedContext) { getString(R.string.delete) }, color = MaterialTheme.colorScheme.secondaryContainer)
                 }
             },
             dismissButton = {
@@ -231,10 +264,10 @@ fun LocalFile() {
                     showDeleteDialog = false
                     playlistToDelete = null
                 }) {
-                    Text(with(updatedContext) { getString(R.string.cancel) }, color = Color.White)
+                    Text(with(updatedContext) { getString(R.string.cancel) }, color = MaterialTheme.colorScheme.onPrimary)
                 }
             },
-            containerColor = Color.DarkGray
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     }
 

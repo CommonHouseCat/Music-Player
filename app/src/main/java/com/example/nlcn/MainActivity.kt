@@ -35,6 +35,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.nlcn.ui.theme.NLCNTheme
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 
 class MainActivity : ComponentActivity() {
     private val showBottomBarState = lazy { mutableStateOf(true) }
@@ -78,7 +80,6 @@ fun MyBottomNavBar() {
                 ) {
                     BottomAppBar( // Define the bottom bar itself
                         modifier = Modifier
-//                            .clip(RoundedCornerShape(8.dp)) // Clips the BottomAppBar to a rounded shape.
                             .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
                             .align(Alignment.BottomCenter)
                             .height(56.dp), // Sets the height of the BottomAppBar.
@@ -154,13 +155,87 @@ fun MyBottomNavBar() {
             startDestination = Screens.Home.screen, // Set initial destination to Home.kt file.
             modifier = Modifier.padding(paddingValues) // Apply padding values to the NavHost.
         ) {
-            // Composable functions defining the routes to different screens.
-            composable(Screens.Home.screen) { Home(navController, LocalContext.current) } // Home.kt file.
-            composable(Screens.LocalFile.screen) { LocalFile() } // LocalFile.kt file.
-            composable(Screens.Settings.screen) { Settings() } // Settings.kt file.
+            composable(
+                Screens.Home.screen,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        Screens.LocalFile.screen, Screens.Settings.screen ->
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(720)
+                            )
+                        else -> null
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        Screens.LocalFile.screen, Screens.Settings.screen ->
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(720)
+                            )
+                        else -> null
+                    }
+                }
+            ) {
+                Home(navController, LocalContext.current)
+            }
 
-            // Composable function defining the route to PlayPreLoadedSound.kt with 2 parameter (soundFileName and displayName).
-            composable("play_preloaded_sound/{soundFileName}/{displayName}") { backStackEntry ->
+            composable(
+                Screens.LocalFile.screen,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        Screens.Home.screen ->
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(720)
+                            )
+                        Screens.Settings.screen ->
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(720)
+                            )
+                        else -> null
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        Screens.Home.screen ->
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(720)
+                            )
+                        Screens.Settings.screen ->
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(720)
+                            )
+                        else -> null
+                    }
+                }
+            ) {
+                LocalFile()
+            }
+
+            composable(
+                Screens.Settings.screen,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(720)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(720)
+                    )
+                }
+            ) {
+                Settings()
+            }
+
+            composable("play_preloaded_sound/{soundFileName}/{displayName}")  { backStackEntry ->
                 val soundFileName = backStackEntry.arguments?.getString("soundFileName") ?: return@composable
                 val displayName = backStackEntry.arguments?.getString("displayName") ?: return@composable
                 PlayPreLoadedSoundScreen(context = LocalContext.current, soundFileName = soundFileName, displayName = displayName)
