@@ -169,17 +169,37 @@ fun PlaylistScreen(
         songs = songDao.getSongsForPlaylist(playlistId)
     }
 
-    // Function to handle shuffle button click
+//    // Function to handle shuffle button click
+//    fun onShuffleClick() {
+//        if (songs.isNotEmpty()) {
+//            val randomIndex = songs.indices.random()
+//            val randomSong = songs[randomIndex]
+//
+//            val intent = Intent(context, PlaySong::class.java).apply {
+//                putExtra("playlistId", playlistId)
+//                putExtra("songIndex", randomIndex)
+//                putExtra("soundFileName", randomSong.contentUri)
+//                putExtra("displayName", randomSong.displayName)
+//                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//            }
+//            context.startActivity(intent)
+//        }
+//    }
     fun onShuffleClick() {
         if (songs.isNotEmpty()) {
-            val randomIndex = songs.indices.random()
-            val randomSong = songs[randomIndex]
+            // Create a shuffled sequence of indices
+            val shuffledIndices = songs.indices.toList().shuffled()
+            Log.d("PlaylistActivity", "Shuffled indices: $shuffledIndices")
 
+            // Start playing the first song in the shuffled sequence
             val intent = Intent(context, PlaySong::class.java).apply {
                 putExtra("playlistId", playlistId)
-                putExtra("songIndex", randomIndex)
-                putExtra("soundFileName", randomSong.contentUri)
-                putExtra("displayName", randomSong.displayName)
+                putExtra("songIndex", shuffledIndices[0])
+                putExtra("soundFileName", songs[shuffledIndices[0]].contentUri)
+                putExtra("displayName", songs[shuffledIndices[0]].displayName)
+                // Pass the shuffled sequence
+                putIntegerArrayListExtra("shuffledIndices", ArrayList(shuffledIndices))
+                putExtra("isShuffled", true)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             context.startActivity(intent)
