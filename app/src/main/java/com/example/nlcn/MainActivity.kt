@@ -39,7 +39,9 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 
 class MainActivity : ComponentActivity() {
+    // Lazy initialization of the  state for showing the bottom bar, only created when accessed the first time
     private val showBottomBarState = lazy { mutableStateOf(true) }
+    // Get and set  value for showBottomBarState
     var showBottomBar: Boolean
         get() = showBottomBarState.value.value
         set(value) { showBottomBarState.value.value = value }
@@ -48,15 +50,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            // Applies your app's theme to the content.
-            NLCNTheme {
-                Surface(
-                    // Makes the surface fill the entire screen.
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    color = Color.Black // Sets the background color of the surface to black.
+            NLCNTheme { // Custom theme
+                Surface( // Provides a background surface for  UI.
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.Black
                 ) {
-                    MyBottomNavBar() // Calls the composable function that creates the bottom navigation bar.
+                    MyBottomNavBar()
                 }
             }
         }
@@ -65,55 +64,48 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyBottomNavBar() {
-    val navController = rememberNavController() // Creates a navigation controller to manage navigation between screens.
-    val selected = remember { mutableStateOf(Icons.Default.Home) } // Stores the Home icon as the default selected navigation item.
-    val mainActivity = LocalContext.current as MainActivity
+    val navController = rememberNavController() // Creates a NavController for navigation between screens.
+    val selected = remember { mutableStateOf(Icons.Default.Home) } // Stores the currently selected icon.
+    val mainActivity = LocalContext.current as MainActivity // Get MainActivity instance
 
-    Scaffold(
+    Scaffold( // Main UI structure
         bottomBar = {
-            if(mainActivity.showBottomBar) {
-                Box( // Defines the box that contains the bottom bar.
+            if(mainActivity.showBottomBar) {// Conditionally displays the bottom bar.
+                Box( // A box to store bottom bar and give it background
                     modifier = Modifier
                         .fillMaxWidth()
-                        .navigationBarsPadding() // Adds padding to avoid overlapping with system navigation bars.
+                        .navigationBarsPadding()
                         .background(MaterialTheme.colorScheme.secondary)
                 ) {
-                    BottomAppBar( // Define the bottom bar itself
+                    BottomAppBar( // The actual bottom bar.
                         modifier = Modifier
-                            .fillMaxWidth(1f) // Makes the BottomAppBar fill the width of the screen.
+                            .fillMaxWidth(1f)
                             .align(Alignment.BottomCenter)
-                            .height(56.dp), // Sets the height of the BottomAppBar.
+                            .height(56.dp),
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentPadding = PaddingValues(0.dp)
                     ) {
-
-                        // Icon button for the Home.kt file.
+                        // Icon button for Home Screen
                         IconButton(
-                            onClick = { // Similar to set on click listener.
-                                selected.value = Icons.Default.Home // Set the selected icon to Home.kt.
-                                // Open the Home activity if the Home icon is clicked.
-                                navController.navigate(Screens.Home.screen) { // Force to return to the home screen on back press.
-                                    popUpTo(Screens.Home.screen) // Pops up to the home screen in the back stack.
-                                }
+                            onClick = {
+                                selected.value = Icons.Default.Home // Updates the selected icon.
+                                navController.navigate(Screens.Home.screen) { popUpTo(Screens.Home.screen) } // Navigate back to Home Screen on back-pressed (<)
                             },
-                            modifier = Modifier.weight(1f) // Assigns equal space between icons.
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon( // Icon displays the icon for Home.kt.
+                            Icon(
                                 imageVector = Icons.Default.Home,
                                 contentDescription = "Home screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Home)
-                                    Color.White else Color.Black
+                                tint = if (selected.value == Icons.Default.Home) Color.White else Color.Black
                             )
                         }
 
-                        // Icon button for the LocalFile.kt file.
+                        // Icon button for LocalFile Screen
                         IconButton(
                             onClick = {
                                 selected.value = Icons.Default.Folder
-                                navController.navigate(Screens.LocalFile.screen) {
-                                    popUpTo(Screens.Home.screen)
-                                }
+                                navController.navigate(Screens.LocalFile.screen) { popUpTo(Screens.Home.screen) }
                             },
                             modifier = Modifier.weight(1f)
                         ) {
@@ -121,18 +113,15 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Folder,
                                 contentDescription = "Local File screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Folder)
-                                    Color.White else Color.Black
+                                tint = if (selected.value == Icons.Default.Folder) Color.White else Color.Black
                             )
                         }
 
-                        // Icon button for the Settings.kt file.
+                        // Icon button for Settings Screen
                         IconButton(
                             onClick = {
                                 selected.value = Icons.Default.Settings
-                                navController.navigate(Screens.Settings.screen) {
-                                    popUpTo(Screens.Home.screen)
-                                }
+                                navController.navigate(Screens.Settings.screen) { popUpTo(Screens.Home.screen) }
                             },
                             modifier = Modifier.weight(1f)
                         ) {
@@ -140,8 +129,7 @@ fun MyBottomNavBar() {
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = "Settings screen",
                                 modifier = Modifier.size(26.dp),
-                                tint = if (selected.value == Icons.Default.Settings)
-                                    Color.White else Color.Black
+                                tint = if (selected.value == Icons.Default.Settings) Color.White else Color.Black
                             )
                         }
                     }
@@ -150,23 +138,27 @@ fun MyBottomNavBar() {
 
         }
     ) { paddingValues ->
-        NavHost(
-            navController = navController, // Pass the navController to NavHost.
-            startDestination = Screens.Home.screen, // Set initial destination to Home.kt file.
-            modifier = Modifier.padding(paddingValues) // Apply padding values to the NavHost.
+
+        NavHost( // Manages navigation between screens.
+            navController = navController, // The navigation controller
+            startDestination = Screens.Home.screen, // The default screen is set to Home Screen
+            modifier = Modifier.padding(paddingValues)
         ) {
+            // Defines the routes and composable for Home Screen.
             composable(
                 Screens.Home.screen,
+                // Enter transition
                 enterTransition = {
-                    when (initialState.destination.route) {
+                    when (initialState.destination.route) {  // Conditionally app listener transitions based on the route of the previous screen.
                         Screens.LocalFile.screen, Screens.Settings.screen ->
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                animationSpec = tween(720)
+                            slideIntoContainer( // Use slideIntoContainer for a sliding animation.
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right, // Slide in from the left.
+                                animationSpec = tween(720) // Use a tween animation with a duration of 720ms.
                             )
                         else -> null
                     }
                 },
+                // Exit transition
                 exitTransition = {
                     when (targetState.destination.route) {
                         Screens.LocalFile.screen, Screens.Settings.screen ->
@@ -178,9 +170,10 @@ fun MyBottomNavBar() {
                     }
                 }
             ) {
-                Home(navController, LocalContext.current)
+                Home(navController, LocalContext.current) // The Home Screen is displayed.
             }
 
+            // Defines the routes and composable for LocalFile Screen.
             composable(
                 Screens.LocalFile.screen,
                 enterTransition = {
@@ -217,6 +210,7 @@ fun MyBottomNavBar() {
                 LocalFile()
             }
 
+            // Defines the routes and composable for Home Screen.
             composable(
                 Screens.Settings.screen,
                 enterTransition = {
@@ -235,9 +229,13 @@ fun MyBottomNavBar() {
                 Settings()
             }
 
+
+            // A route to PlayPreLoadedSound for Home Screen
             composable("play_preloaded_sound/{soundFileName}/{displayName}")  { backStackEntry ->
+                // Get the sound file name and display name from the back stack entry arguments
                 val soundFileName = backStackEntry.arguments?.getString("soundFileName") ?: return@composable
                 val displayName = backStackEntry.arguments?.getString("displayName") ?: return@composable
+                // Navigate to the PlayPreLoadedSoundScreen with the provided arguments
                 PlayPreLoadedSoundScreen(context = LocalContext.current, soundFileName = soundFileName, displayName = displayName)
             }
         }

@@ -42,13 +42,14 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
-    navController: NavController,
+    navController: NavController, // NavController for navigation between screens
     context: Context
 ){
+    // Accessing the data store to retrieve the current language preference.
     val dataStore = remember { PreferenceDataStore(context) }
     val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
-    // Update configuration when language changes
+    // Creating an updated context with the current language applied.
     val updatedContext = remember(currentLanguage.value) {
         val locale = Locale(currentLanguage.value)
         Locale.setDefault(locale)
@@ -82,12 +83,14 @@ fun Home(
             )
         )
 
+        // Lazy Column to display the categories and sounds
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.secondary)
                 .padding(8.dp)
         ) {
+            // item function used to separate title and rows of sounds
             item { CategoryTitle(title = with(updatedContext) { getString(R.string.rainTitle) }) }
             item {
                 CategoryRow(
@@ -137,6 +140,7 @@ fun Home(
     }
 }
 
+// Composable function to display a category title.
 @Composable
 fun CategoryTitle(title: String) {
     Text(
@@ -147,6 +151,7 @@ fun CategoryTitle(title: String) {
     )
 }
 
+// Composable function to for a LazyRow to display a list of sounds in a horizontal scroll
 @Composable
 fun CategoryRow(sounds: List<SoundItem>, navController: NavController) {
     LazyRow {
@@ -157,8 +162,10 @@ fun CategoryRow(sounds: List<SoundItem>, navController: NavController) {
     }
 }
 
+// Composable function to display a sound card with image and name.
 @Composable
 fun SoundCard(sound: SoundItem, navController: NavController) {
+    // Mapping for different sound names to sound files
     val soundFileName = when (sound.name) {
         "Rain on Window" -> "rain_on_window.mp3"
         "Thunderstorm" -> "thunderstorm.mp3"
@@ -193,6 +200,7 @@ fun SoundCard(sound: SoundItem, navController: NavController) {
             .size(150.dp)
             .clickable {
                 if (soundFileName.isNotEmpty()) {
+                    // Navigating to the sound playback screen when the card is clicked.
                     navController.navigate("play_preloaded_sound/$soundFileName/${sound.name}")
                 }
             },
@@ -217,5 +225,6 @@ fun SoundCard(sound: SoundItem, navController: NavController) {
     }
 }
 
+// Data class representing a sound item with its name and image resource.
 data class SoundItem(val name: String, val imageRes: Int)
 

@@ -60,7 +60,6 @@ import android.widget.Toast
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalFile() {
-
     var playlistTitle by remember { mutableStateOf("") }
     var playlists by remember { mutableStateOf(listOf<PlaylistEntity>()) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -78,19 +77,19 @@ fun LocalFile() {
     val dataStore = remember { PreferenceDataStore(context) }
     val currentLanguage = dataStore.getLanguage.collectAsState(initial = "en")
 
+    // Requesting the READ_MEDIA_AUDIO permission
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission() // Use the correct contract
     ) { isGranted ->
-        if(isGranted) {
+        if(isGranted) { // Check if the permission is granted
             Log.d("LocalFile", "Permission granted")
             permissionGranted = isGranted
-        }else {
+        }else { // Display a toast if the permission is denied
             Log.d("LocalFile", "Permission denied")
             Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
             Toast.makeText(context, "Please grant permission\nin app settings", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     // Update configuration when language changes
     val updatedContext = remember(currentLanguage.value) {
@@ -107,7 +106,6 @@ fun LocalFile() {
     LaunchedEffect(Unit) {
         launcher.launch(Manifest.permission.READ_MEDIA_AUDIO)
         coroutineScope.launch {
-            playlists = playlistDao.getAllPlaylists()
             playlists = playlistDao.getAllPlaylists()
         }
     }
@@ -136,6 +134,7 @@ fun LocalFile() {
             },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
 
+            // The add button is disable of the permission if not granted
             actions = {
                 IconButton(
                     onClick = {
@@ -156,6 +155,7 @@ fun LocalFile() {
             }
         )
 
+        // Display the list of playlists
         LazyColumn {
             items(playlists) { playlist ->
                 PlaylistItem(
