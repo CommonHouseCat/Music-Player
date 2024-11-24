@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
+// ForeignKey is used to establish a relationship between
+// PlaylistEntity and SongEntity tables
 @Entity(
     tableName = "songs",
     foreignKeys = [
@@ -15,6 +17,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
+// Song table Entity
 data class SongEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val playlistId: Int,

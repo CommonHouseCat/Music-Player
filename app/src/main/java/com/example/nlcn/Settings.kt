@@ -1,6 +1,5 @@
 package com.example.nlcn
 
-
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -41,16 +40,17 @@ import com.example.nlcn.ui.theme.NLCNTheme
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-
-
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+    // Custom class handles data persistence (Using DataStore)
     private val preferenceDataStore = PreferenceDataStore(application)
 
+    // Save selected language to the datastore.
     suspend fun saveLanguage(language: String) {
         preferenceDataStore.saveLanguage(language)
     }
 
-    suspend fun saveTheme(theme: String) {  // Add theme saving function
+    // Save selected theme to the datastore.
+    suspend fun saveTheme(theme: String) {
         preferenceDataStore.saveTheme(theme)
     }
 
@@ -104,7 +104,6 @@ fun Settings(viewModel: SettingsViewModel = viewModel()){
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
 
-            // Spacer between the top bar and the row
             Spacer(modifier = Modifier.height(16.dp))
 
             // Row for Theme settings
@@ -130,9 +129,7 @@ fun Settings(viewModel: SettingsViewModel = viewModel()){
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .clickable {
-                                scope.launch {
-                                    viewModel.saveTheme("dark")
-                                }
+                                scope.launch { viewModel.saveTheme("dark") }
                             }
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
@@ -149,9 +146,7 @@ fun Settings(viewModel: SettingsViewModel = viewModel()){
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .clickable {
-                                scope.launch {
-                                    viewModel.saveTheme("light")
-                                }
+                                scope.launch { viewModel.saveTheme("light") }
                             }
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
@@ -190,15 +185,12 @@ fun Settings(viewModel: SettingsViewModel = viewModel()){
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .clickable {
-                                scope.launch {
-                                    viewModel.saveLanguage("en")
-                                }
+                                scope.launch { viewModel.saveLanguage("en") }
                             }
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            "En",
-                            color = MaterialTheme.colorScheme.onPrimary)
+                            "En", color = MaterialTheme.colorScheme.onPrimary)
                     }
 
                     Box(
@@ -219,8 +211,7 @@ fun Settings(viewModel: SettingsViewModel = viewModel()){
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            "Vi",
-                            color = MaterialTheme.colorScheme.onPrimary)
+                            "Vi", color = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
             }

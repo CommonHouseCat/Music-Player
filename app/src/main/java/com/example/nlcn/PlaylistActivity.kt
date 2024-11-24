@@ -68,9 +68,12 @@ class PlaylistActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Get playlist ID and title from intent in LocalFiles screen
         val playlistId = intent.getIntExtra("PLAYLIST_ID", -1)
         val playlistTitle = intent.getStringExtra("PLAYLIST_TITLE") ?: "Playlist"
 
+        // Initialize launcher for picking audio file
+        // Also check for permissions
         pickAudioFileLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 try {
@@ -169,27 +172,11 @@ fun PlaylistScreen(
         songs = songDao.getSongsForPlaylist(playlistId)
     }
 
-//    // Function to handle shuffle button click
-//    fun onShuffleClick() {
-//        if (songs.isNotEmpty()) {
-//            val randomIndex = songs.indices.random()
-//            val randomSong = songs[randomIndex]
-//
-//            val intent = Intent(context, PlaySong::class.java).apply {
-//                putExtra("playlistId", playlistId)
-//                putExtra("songIndex", randomIndex)
-//                putExtra("soundFileName", randomSong.contentUri)
-//                putExtra("displayName", randomSong.displayName)
-//                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//            }
-//            context.startActivity(intent)
-//        }
-//    }
+    // Shuffle  function
     fun onShuffleClick() {
         if (songs.isNotEmpty()) {
             // Create a shuffled sequence of indices
             val shuffledIndices = songs.indices.toList().shuffled()
-            Log.d("PlaylistActivity", "Shuffled indices: $shuffledIndices")
 
             // Start playing the first song in the shuffled sequence
             val intent = Intent(context, PlaySong::class.java).apply {
@@ -505,6 +492,7 @@ fun SongItem(
     }
 }
 
+// Helper function to get the file name from the URI
 fun getFileNameFromUri(context: Context, uri: Uri): String {
     var result: String? = null
     if (uri.scheme == "content") {

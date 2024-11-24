@@ -69,6 +69,7 @@ import java.util.Locale
 class PlayPreLoadedSound:ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Get the sound file name and display name from the intent in Home screen
         val soundFileName = intent.getStringExtra("soundFileName") ?: return
         val displayName = intent.getStringExtra("displayName") ?: "Unknown Track"
 
@@ -145,9 +146,10 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
 
     // MediaPlayer initialization and progress tracking
     DisposableEffect(key1 = soundFileName) {
-        val assetFileDescriptor = context.assets.openFd(soundFileName)
+        val assetFileDescriptor = context.assets.openFd(soundFileName) // Open the sound file from assets
+        // Set the data source for the MediaPlayer
         mediaPlayer.setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-        mediaPlayer.prepareAsync()
+        mediaPlayer.prepareAsync() // Prepare the MediaPlayer asynchronously
 
         // When the MediaPlayer is prepared, set the duration
         mediaPlayer.setOnPreparedListener {
@@ -161,7 +163,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
         mediaPlayer.setOnCompletionListener {
             if (isRepeatOn || isTimerOn) {
                 mediaPlayer.seekTo(0)
-                mediaPlayer.start() // Restart the track if repeat is on
+                mediaPlayer.start() // Restart the track if repeat is on or the timer is set
             } else {
                 isPlaying = false // Mark as not playing when finished
             }
@@ -175,21 +177,23 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             }
         }
 
+        // Cleaning up resources when the composable is disposed
         onDispose {
-            updatePositionJob.cancel()
-            mediaPlayer.release()
-            mainActivity.showBottomBar = true
+            updatePositionJob.cancel()// Cancel the coroutine job that updates the current position
+            mediaPlayer.release() // Release the MediaPlayer resources
+            mainActivity.showBottomBar = true // Show the bottom bar again
         }
     }
 
+    // Handle the timer feature
     LaunchedEffect(isTimerOn, timerDuration) {
-        if (isTimerOn && timerDuration > 0) {
-            remainingTime = timerDuration * 60
-            while (remainingTime > 0 && isTimerOn) {
+        if (isTimerOn && timerDuration > 0) { // If the timer is on and the duration > 0
+            remainingTime = timerDuration * 60 // Calculate the remaining time in seconds
+            while (remainingTime > 0 && isTimerOn) { // While the timer is on and duration > 0
                 delay(1000)
                 remainingTime--
             }
-            if (remainingTime <= 0) {
+            if (remainingTime <= 0) { // If the timer has finished
                 isTimerOn = false
                 mediaPlayer.pause()
                 isPlaying = false
@@ -197,28 +201,27 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
         }
     }
 
+    // Composable function to display the timer picker dialog
     @Composable
     fun TimerPickerDialog(
-        onTimeSelected: (Int) -> Unit,
-        onDismissRequest: () -> Unit
+        onTimeSelected: (Int) -> Unit, // Callback function invoked when a time is selected
+        onDismissRequest: () -> Unit // Callback function invoked when the dialog is dismissed
     ) {
         var selectedTime by remember { mutableFloatStateOf(0f) }
 
         AlertDialog(
-            onDismissRequest = { onDismissRequest() },
+            onDismissRequest = { onDismissRequest() }, // Callback when dialog is dismissed
             title = { Text(with(updatedContext) { getString(R.string.setTimer) }, color = MaterialTheme.colorScheme.onPrimary)  },
             text = {
                 Column {
-                    // Display the selected time in minutes directly
-                    Text(
-                        text = with(updatedContext){
-                            getString(R.string.Duration) + " ${selectedTime.toInt()}"},
+                    Text( // Display the selected time in minutes directly
+                        text = with(updatedContext){getString(R.string.Duration) + " ${selectedTime.toInt()}"},
                         color = MaterialTheme.colorScheme.onPrimary)
                     Slider(
                         value = selectedTime,
                         onValueChange = { selectedTime = it },
-                        valueRange = 0f..480f,
-                        steps = 479,
+                        valueRange = 0f..480f, // Range of the slider (0 to 480 minutes)
+                        steps = 479, // Number of steps on the slider
                         colors = SliderDefaults.colors(
                             thumbColor = MaterialTheme.colorScheme.secondaryContainer,
                             activeTrackColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -302,6 +305,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 color = MaterialTheme.colorScheme.onPrimary
             )
 
+            // If a timer is set then display the timer countdown, otherwise do not
             if (isTimerOn) {
                 Text(
                     text = with(updatedContext) {getString(R.string.timer) + ": ${formatTimeForCounter(remainingTime)}"},
@@ -314,11 +318,11 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
 
             // Audio progress bar
             Slider(
-                value = if (duration > 0) currentPosition / duration else 0f,
+                value = if (duration > 0) currentPosition / duration else 0f,// Current progress of the audio track
                 onValueChange = { newValue ->
-                    if (duration > 0) {
-                        mediaPlayer.seekTo((newValue * duration).toInt())
-                        currentPosition = newValue * duration
+                    if (duration > 0) { // Only seek if the duration is known
+                        mediaPlayer.seekTo((newValue * duration).toInt()) // Seek to the new position
+                        currentPosition = newValue * duration // Update the current position state
                     }
                 },
                 modifier = Modifier.padding(horizontal = 36.dp),
@@ -330,6 +334,7 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
             )
 
             // Display current time and duration
+            // Similar to 00:30 / 10:00 in youtube
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -348,12 +353,14 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Row to display buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
+                // Repeat button
                 IconButton(
-                    onClick = { isRepeatOn = !isRepeatOn },
+                    onClick = { isRepeatOn = !isRepeatOn }, // Toggle repeat state
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
@@ -367,12 +374,10 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 // Pause/play button
                 IconButton(
                     onClick = {
-                        if(isPlaying) {
-                            mediaPlayer.pause()
-                        } else {
-                            mediaPlayer.start()
-                        }
-                        isPlaying = !isPlaying
+                        // Pause if playing, play if paused
+                        if(isPlaying) { mediaPlayer.pause() }
+                        else { mediaPlayer.start() }
+                        isPlaying = !isPlaying // Toggle the playing state
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -387,11 +392,8 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
                 // Set time button
                 IconButton(
                     onClick = {
-                        if (isTimerOn) {
-                            isTimerOn = false
-                        } else {
-                            showTimerPicker = true
-                        }
+                        if (isTimerOn) { isTimerOn = false }  // If timer is on, turn it off
+                        else { showTimerPicker = true } // Otherwise, show the timer picker dialog
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -406,29 +408,31 @@ fun PlayPreLoadedSoundScreen(context: Context, soundFileName: String, displayNam
         }
     }
 
+    // Show the timer picker dialog
     if (showTimerPicker) {
         TimerPickerDialog(
             onTimeSelected = { minutes ->
-                timerDuration = minutes
-                isTimerOn = true
-                showTimerPicker = false
-                if (!isPlaying) {
-                    mediaPlayer.start()
-                    isPlaying = true
+                timerDuration = minutes // Set timer duration
+                isTimerOn = true // Start timer
+                showTimerPicker = false // Hide dialog
+                if (!isPlaying) { // If the audio is not playing
+                    mediaPlayer.start() // Start playing audio
+                    isPlaying = true // Update playing state
                 }
             },
-            onDismissRequest = { showTimerPicker = false }
+            onDismissRequest = { showTimerPicker = false } // Dismiss the timer picker dialog
         )
     }
 }
 // Helper function to format time in mm:ss
 @SuppressLint("DefaultLocale")
-fun formatTime(timeMs: Int): String {
+fun formatTime(timeMs: Int): String { // take milliseconds for input
     val minutes = (timeMs / 1000) / 60
     val seconds = (timeMs / 1000) % 60
     return String.format("%02d:%02d", minutes, seconds)
 }
 
+// Helper function to format time for the counter in mm:ss format.
 @SuppressLint("DefaultLocale")
 fun formatTimeForCounter(timeMs: Int): String {
     val minutes = (timeMs) / 60

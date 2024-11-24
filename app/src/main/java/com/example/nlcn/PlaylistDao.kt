@@ -26,5 +26,4 @@ interface PlaylistDao {
     // Update a Playlist's title by its ID
     @Query("UPDATE playlists SET title = :newTitle WHERE id = :playlistId")
     suspend fun updatePlaylistTitle(playlistId: Int, newTitle: String)
-
 }

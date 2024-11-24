@@ -48,28 +48,35 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun NLCNTheme(
+    // dDtaStore instance to access preferences, defaults to one using LocalContext
     dataStore: PreferenceDataStore = PreferenceDataStore(LocalContext.current),
     content: @Composable () -> Unit
 ) {
+    // Set currentTheme default to dark
     val currentTheme = dataStore.getTheme.collectAsState(initial = "dark")
+    // Retrieves the current context using LocalContext
     val context = LocalContext.current
 
+    // Determines the color scheme based on the current theme preference
     val colorScheme = when (currentTheme.value) {
         "light" -> LightColorScheme
         "dark" -> DarkColorScheme
         else -> DarkColorScheme
     }
 
-    val view = LocalView.current
+
+    val view = LocalView.current // Retrieves the current view using LocalView
+    // Applies side effects only when not in preview mode
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (context as Activity).window
+            val window = (context as Activity).window  // Gets the window from the current activity
+            // Sets the status bar color & appearance based on color scheme
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                currentTheme.value == "light"
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = currentTheme.value == "light"
         }
     }
 
+    // Applies the MaterialTheme with the determined color scheme and typography
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

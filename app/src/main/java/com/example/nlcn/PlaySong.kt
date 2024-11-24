@@ -71,12 +71,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-
 class PlaySong:ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Get playlistId, songIndex, soundFileUri, and displayName from intent in Playlist activity
         val playlistId = intent.getIntExtra("playlistId", -1)
         val currentSongIndex = intent.getIntExtra("songIndex", -1)
         val soundFileUri = intent.getStringExtra("soundFileName") ?: return
@@ -114,14 +114,11 @@ fun PlaylistSongScreen(
     initialSoundFileUri: String,
     initialDisplayName: String
 ) {
+    var playlistSongs by remember { mutableStateOf<List<SongEntity>>(emptyList()) }
+
     val database = remember { AppDatabase.getDatabase(context) }
     val songDao = remember { database.songDao() }
-
-    // State to track playlist songs and current index
-    var playlistSongs by remember { mutableStateOf<List<SongEntity>>(emptyList()) }
-    var currentSongIndex by remember { mutableStateOf(initialSongIndex) }
-
-    // Get shuffled sequence if available
+    val currentSongIndex by remember { mutableStateOf(initialSongIndex) }
     val isShuffled = (context as? ComponentActivity)?.intent?.getBooleanExtra("isShuffled", false) ?: false
     val shuffledIndices = (context as? ComponentActivity)?.intent?.getIntegerArrayListExtra("shuffledIndices")
 
@@ -132,9 +129,12 @@ fun PlaylistSongScreen(
 
     // Function to play next song
     val playNextSong: () -> Unit = {
+        // If shuffle mode is on and shuffle playlist is not null
         if (isShuffled && shuffledIndices != null) {
+            // Get the current position of the song in the shuffled indices list
             val currentPosition = shuffledIndices.indexOf(currentSongIndex)
-            if (currentPosition < shuffledIndices.size - 1) {
+            if (currentPosition < shuffledIndices.size - 1) { // If it's not the last song
+                // Get the next song
                 val nextIndex = shuffledIndices[currentPosition + 1]
                 val nextSong = playlistSongs[nextIndex]
 
@@ -155,8 +155,9 @@ fun PlaylistSongScreen(
                 (context as? ComponentActivity)?.finish()
             }
         } else {
-            // Original sequential playback logic
-            if (currentSongIndex < playlistSongs.size - 1) {
+            // The normal playback mode
+            if (currentSongIndex < playlistSongs.size - 1) { // If the current song is not the last song
+                // Get the next song
                 val nextIndex = currentSongIndex + 1
                 val nextSong = playlistSongs[nextIndex]
 
@@ -214,57 +215,6 @@ fun PlaylistSongScreen(
             }
         }
     }
-
-//    // Function to play next song
-//    val playNextSong: () -> Unit = {
-//        if (currentSongIndex < playlistSongs.size - 1) {
-//            val nextIndex = currentSongIndex + 1
-//            val nextSong = playlistSongs[nextIndex]
-//
-//            // Update current index
-//            currentSongIndex = nextIndex
-//
-//            // Start a new PlaySong activity with the next song
-//            val intent = Intent(context, PlaySong::class.java).apply {
-//                putExtra("playlistId", playlistId)
-//                putExtra("songIndex", nextIndex)
-//                putExtra("soundFileName", nextSong.contentUri)
-//                putExtra("displayName", nextSong.displayName)
-//                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//            }
-//            context.startActivity(intent)
-//
-//            // Finish the current activity
-//            (context as? ComponentActivity)?.finish()
-//        } else {
-//            // Stop playback and finish the activity when the last song is reached
-//            Toast.makeText(context, "End of Playlist", Toast.LENGTH_SHORT).show()
-//            (context as? ComponentActivity)?.finish()
-//        }
-//    }
-//
-//    val playPreviousSong: () -> Unit = {
-//        if (playlistSongs.isNotEmpty()) {
-//            val previousIndex = if (currentSongIndex > 0) currentSongIndex - 1 else playlistSongs.size - 1
-//            val previousSong = playlistSongs[previousIndex]
-//
-//            // Update current index
-//            currentSongIndex = previousIndex
-//
-//            // Start a new PlaySong activity with the previous song
-//            val intent = Intent(context, PlaySong::class.java).apply {
-//                putExtra("playlistId", playlistId)
-//                putExtra("songIndex", previousIndex)
-//                putExtra("soundFileName", previousSong.contentUri)
-//                putExtra("displayName", previousSong.displayName)
-//                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//            }
-//            context.startActivity(intent)
-//
-//            // Finish the current activity
-//            (context as? ComponentActivity)?.finish()
-//        }
-//    }
 
     // Modify PlaySongScreen to include playlist navigation
     PlaySongScreen(
