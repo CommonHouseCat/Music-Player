@@ -1,6 +1,7 @@
 # Sleep Assistance Sound Player
 <p align="center">
   <a href="https://android-arsenal.com/api?level=33"><img alt="API" src="https://img.shields.io/badge/API-33%2B-brightgreen"/></a>
+  <a href="https://github.com/CommonHouseCat"><img alt="Profile" src="https://commonhousecat.github.io/badges/profile-badge.svg"/></a>
 </p>
 
 A simple sound player to help users fall asleep created with Jetpack Compose and MediaPlayer
