@@ -69,7 +69,7 @@ import java.util.Locale
 class PlayPreLoadedSound:ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Get the sound file name and display name from the intent in Home screen
+        // Get the sound file name and display name from the intent in Main Activity
         val soundFileName = intent.getStringExtra("soundFileName") ?: return
         val displayName = intent.getStringExtra("displayName") ?: "Unknown Track"
 
