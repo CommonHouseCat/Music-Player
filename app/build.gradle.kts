@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
+//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -75,6 +76,9 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.compiler)
+//    implementation("androidx.room:room-ktx:2.6.1")
+//    ksp("androidx.room:room-compiler:2.6.1")
+
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.coroutines.android)
