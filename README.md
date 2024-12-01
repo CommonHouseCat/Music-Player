@@ -4,7 +4,7 @@
   <a href="https://github.com/CommonHouseCat"><img alt="Profile" src="https://commonhousecat.github.io/badges/profile-badge.svg"/></a>
 </p>
 
-A simple sound player to help users fall asleep created with Jetpack Compose and MediaPlayer
+A simple music player created with Jetpack Compose and MediaPlayer
 
 ## Preview
 
